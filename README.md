@@ -1,3 +1,3 @@
 # Uminho
-Repository for my projects
+Repository for my projects.
 João Cerqueira - A65432
