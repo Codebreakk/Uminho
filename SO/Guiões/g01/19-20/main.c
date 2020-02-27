@@ -16,7 +16,8 @@
 
 void print_menu(){
   char firstline[] = "Escolher exercicio:\n";
-  char options[] = "  0) exemplo professor\n  1) mycp\n  2) mycat\n  3) readln\n  4) readln2\n";
+  char options[] = "  0) exemplo\n  1) mycp\n  2) mycat\n  3) readln\n\
+  4) readln2\n  5) myln\n  6) pessoas\n";
   char exit[] = "(Para sair, usar Control + D)\n";
   write(1, firstline, sizeof(firstline));
   write(1, options, sizeof(options));
@@ -46,7 +47,13 @@ int main(int argc, const char* argv[]){
     }else if(buf[0] == '4'){
       result = myreadln2(argc, argv);
       printf("\n");
-    }else{
+    }else if(buf[0] == '5'){
+      result = mynl(argc, argv);
+      printf("\n");
+    }/**else if(buf[0] == '6'){
+      result = pessoas(argc, argv);
+      printf("\n");
+    }*/else{
       print_menu();
     }
   }
