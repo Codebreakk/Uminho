@@ -3,14 +3,14 @@ CFLAGS = -Wall -g
 
 all: clean main
 
-main: main.o g01.o
+main: main.o g02.o
 
 main.o: main.c main.h
 
-g01: g01.c main.h
+g01: g02.c main.h
 
 run:
 	./main
 
 clean:
-	rm -f main.o main g01.o
+	rm -f main.o main g02.o

@@ -23,3 +23,14 @@ int myreadln2(int argc, const char* argv[]);
 ssize_t myreadln3(int fd, char *line, size_t size);
 
 int mynl(int argc, const char* argv[]);
+
+int readchar(int fd, char* buf);
+
+ssize_t myreadln4(int fd, char *line, size_t size);
+
+int pessoas(int argc, const char* argv[]);
+
+//ex.6
+int new_person(char* name, int age);
+int person_change_age(char* name, int age);
+int person_change_age_v2(long pos, int age);

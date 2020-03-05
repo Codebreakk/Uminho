@@ -50,10 +50,10 @@ int main(int argc, const char* argv[]){
     }else if(buf[0] == '5'){
       result = mynl(argc, argv);
       printf("\n");
-    }/**else if(buf[0] == '6'){
+    }else if(buf[0] == '6'){
       result = pessoas(argc, argv);
       printf("\n");
-    }*/else{
+    }else{
       print_menu();
     }
   }
