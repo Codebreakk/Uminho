@@ -8,9 +8,17 @@ int main(int argc, const char* argv[]){
   // exercício 2
   //ex2();
 
-  // exercicio 3
+  // exercício 3
   //ex3();
-  //ex3_alt();
+
+  // exercício 4
+  //ex4();
+
+  // exercício 5
+  //ex5();
+
+  // exercicio 6
+  //ex6(argc, argv);
 
   _exit(0);
 }

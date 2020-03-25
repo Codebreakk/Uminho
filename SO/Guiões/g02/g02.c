@@ -47,7 +47,10 @@ int ex3(){
     }else{
       // processo-pai
       //pid_t child = wait(&status);
-      printf("Filho com pid %d iniciou na posição %d\n", pid, status);
+      pid_t terminated_pid = wait(&status);
+      if(WIFEXITED(status)){
+        printf("Filho com pid %d iniciou na posição %d\n", terminated_pid, WEXITSTATUS(status));
+      }
     }
     i++;
   }
@@ -55,7 +58,12 @@ int ex3(){
   _exit(0);
 }
 
-int ex3_alt(){
+/** exercício 4: Implemente um programa que crie 10 processos filhos que deverão
+*              executar concorrentemente. O pai deverá esperar pelo fim de exe-
+*              cução de todos os seus filhos, imprimindo os respectivos códigos
+*              de saída.
+*/
+int ex4(){
   pid_t pid;
   int i = 0;
   int status;
@@ -73,10 +81,122 @@ int ex3_alt(){
   while(i < 10){
     if(pid != 0){
       pid_t child = wait(&status);
-      printf("Filho com pid %d iniciou na posição %d\n", child, status);
+      if(WIFEXITED(status)){
+        printf("Filho com pid %d iniciou na posição %d\n", child, WEXITSTATUS(status));
+      }
     }
     i++;
   }
 
   _exit(0);
+}
+
+int ex5(){
+  pid_t pid;
+  int i = 0;
+  int status;
+  for(i = 0; i < 10; i++){
+    if((pid = fork()) == 0){
+      // processo-filho
+      printf("Sou filho com pid %d e o meu pai tem pid %d.\n", getpid(), getppid());
+    }else{
+      pid_t terminated_pid = wait(&status);
+
+      if(WIFEXITED(status)){
+        printf("Filho com pid %d iniciou na posição %d\n", terminated_pid, WEXITSTATUS(status));
+      }else{
+        printf("[pai] process %d exited.", terminated_pid);
+      }
+      _exit(0);
+    }
+  }
+
+  _exit(0);
+}
+
+int ex6(int argc, const char* argv[]){
+  pid_t pid;
+  int needle = atoi(argv[1]);
+  int rows = 10;
+  int cols = 10000;
+  int rand_max = 10000;
+  int status;
+  int matrix[rows][cols];
+  int occurrences = 0;
+
+  //
+  printf("generating numbers from 0 to %d... \n", rand_max);
+  for(i = 0; i < rows; i++){
+    for(j = 0; j < cols; j++){
+      matrix[i][j] = rand() % rand_max;
+    }
+  }
+
+  // criar 10 processos por linha
+  for (i = 0; i < rows; i++) {
+    if((pid == fork()) == 0){
+      //... matrix[i][coluna...]
+      // _exit(0) || _exit(1)
+    }
+  }
+
+  // Aguardar processos filho
+  for (i = 0; i < rows; i++) {
+    //... esperar por 1 processo
+    //verificar código de saída, se saiu bem.
+    // se WEXITSTATUS(status) = -> ocurrences++
+  }
+
+  _exit(0);
+}
+
+// a partir do cenário do exercício anterior, pretende-se que imprima por ordem
+// crescente os números de linha onde existem ocorrências do número.
+int ex7(int argc, const char* argv[]){
+  pid_t pid;
+  int needle = atoi(argv[1]);
+  int rows = 10;
+  int cols = 10000;
+  int rand_max = 10000;
+  int status;
+  int matrix[rows][cols];
+  int occurrences = 0;
+
+  //
+  printf("generating numbers from 0 to %d... \n", rand_max);
+  for(i = 0; i < rows; i++){
+    for(j = 0; j < cols; j++){
+      matrix[i][j] = rand() % rand_max;
+    }
+  }
+
+  // criar 10 processos: 1 por linha
+  for (i = 0; i < rows; i++) {
+    if((pid == fork()) == 0){
+      // ... matrix[i][coluna...]
+      // _exit(0) || _exit(i)
+    }
+    // guardar pid na lista de pids.
+  }
+
+  // Aguardar por processos filho #linhas = 10
+  for (i = 0; i < rows; i++) {
+    // ... esperar por 1 (qualquer) processo
+    //     OU por 1 processo filho em particular (lista de pids).
+    // verificar código de saída, se saiu bem.
+    // se WEXITSTATUS(status) = -> occurrences++
+  }
+
+  _exit(0);
+}
+
+// Exercício adicional
+/** Implemente uma nova versão do programa feito nos exercícios anteriores que
+*   opere sobre uma matriz persistida em ficheiro (em formato binário). A matriz
+*   deve ser gerada aleatóriamente pelo processo pai e escrita em ficheiro, no
+*   início da execução do programa. Após este passo deve ser possível pesquisar
+*   a existência de um determinado número utilizando múltiplos processos.
+*/
+int ex_extra(){
+  _exit(0):
 }
