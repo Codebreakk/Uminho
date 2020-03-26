@@ -10,7 +10,13 @@ public class Producer implements Runnable{
   @Override
   public void run(){
     for(int i = 0; i < 20; i++){
-      this.boundedBuffer.put(i);
+      {
+        try{
+          this.boundedBuffer.put(i);
+        }catch(InterruptedException e){
+          e.printStackTrace();
+        }
+      }
     }
   }
 }

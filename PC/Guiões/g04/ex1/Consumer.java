@@ -10,7 +10,11 @@ public class Consumer implements Runnable{
   @Override
   public void run(){
     for(int i = 0; i < 20; i++){
-      this.boundedBuffer.get();
+      try{
+        this.boundedBuffer.get();
+      }catch(InterruptedException e){
+        e.printStackTrace();
+      }
     }
   }
 }

@@ -1,5 +1,7 @@
-public class Main(){
+public class Main{
   public static void main(String[] args){
+    BoundedBuffer b = new BoundedBuffer(5);
+
     Thread t1 = new Thread(new Producer(b));
     Thread t2 = new Thread(new Consumer(b));
 

@@ -1,3 +1,5 @@
+import java.lang.String;
+
 public class BoundedBuffer{
   int total = 5;
   private int[] values;
@@ -9,19 +11,19 @@ public class BoundedBuffer{
   }
 
   // bloquear enquanto o array estiver cheio
-  public synchronized void put(int v){
-    while(poswrite == len(this.values)){
-      obj.wait();
+  public synchronized void put(int v) throws InterruptedException{
+    while(poswrite == (this.values.length)){
+      this.wait();
     }
-    int[poswrite] = v;
+    values[poswrite] = v;
     poswrite++;
     this.notifyAll();
   }
 
   // bloquear enquanto o array estiver vazio
-  public synchronized int get(){
+  public synchronized int get() throws InterruptedException{
     while(poswrite == 0){
-      obj.wait();
+      this.wait();
     }
     int posread = --this.poswrite;
     int result = this.values[posread];
