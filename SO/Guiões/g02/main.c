@@ -18,7 +18,7 @@ int main(int argc, const char* argv[]){
   //ex5();
 
   // exercicio 6
-  //ex6(argc, argv);
+  ex6(argc, argv);
 
   _exit(0);
 }

@@ -123,8 +123,9 @@ int ex6(int argc, const char* argv[]){
   int status;
   int matrix[rows][cols];
   int occurrences = 0;
+  int i, j;
 
-  //
+  // Random matrix generation
   printf("generating numbers from 0 to %d... \n", rand_max);
   for(i = 0; i < rows; i++){
     for(j = 0; j < cols; j++){
@@ -134,9 +135,15 @@ int ex6(int argc, const char* argv[]){
 
   // criar 10 processos por linha
   for (i = 0; i < rows; i++) {
-    if((pid == fork()) == 0){
+    if((pid = fork()) == 0){
       //... matrix[i][coluna...]
       // _exit(0) || _exit(1)
+      for(j = 0; j < cols; j++){
+        if(matrix[i][j] == needle){
+          _exit(0);
+        }
+      }
+      _exit(1);
     }
   }
 
@@ -144,14 +151,21 @@ int ex6(int argc, const char* argv[]){
   for (i = 0; i < rows; i++) {
     //... esperar por 1 processo
     //verificar código de saída, se saiu bem.
-    // se WEXITSTATUS(status) = -> ocurrences++
+    // se WEXITSTATUS(status) = 0 -> ocurrences++
+    pid_t terminated_pid = wait(&status);
+
+    if(WEXITSTATUS(status) == 0){
+      occurrences++;
+    }
   }
 
+  printf("Occurrences: %d.\n", occurrences);
   _exit(0);
 }
 
 // a partir do cenário do exercício anterior, pretende-se que imprima por ordem
 // crescente os números de linha onde existem ocorrências do número.
+
 int ex7(int argc, const char* argv[]){
   pid_t pid;
   int needle = atoi(argv[1]);
@@ -161,7 +175,7 @@ int ex7(int argc, const char* argv[]){
   int status;
   int matrix[rows][cols];
   int occurrences = 0;
-
+  int i, j;
   //
   printf("generating numbers from 0 to %d... \n", rand_max);
   for(i = 0; i < rows; i++){
@@ -198,5 +212,5 @@ int ex7(int argc, const char* argv[]){
 *   a existência de um determinado número utilizando múltiplos processos.
 */
 int ex_extra(){
-  _exit(0):
+  _exit(0);
 }
