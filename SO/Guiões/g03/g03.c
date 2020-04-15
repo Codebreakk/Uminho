@@ -108,3 +108,15 @@ int ex5(int argc, const char* argv[]){
 
   _exit(0);
 }
+
+int ex6( Char * command){
+  // Dividir a string. (strtok/strsep)
+  // resultado: args[] = ["ls", "-l", "dir/", NULL];
+  // fork()
+  //      se for processo filho:
+  //                      execvp(args[0], args);
+  //                      se execvp retornou, _exit(código de saida de erro).
+  //      se for processo pai:
+  //                     wait(&status);
+  //                     return WEXITSTATUS(status);
+}
