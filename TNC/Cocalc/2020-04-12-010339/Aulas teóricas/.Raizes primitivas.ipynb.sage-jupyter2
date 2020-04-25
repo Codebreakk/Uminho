@@ -1,0 +1,51 @@
+{"backend_state":"ready","kernel":"sagemath","kernel_state":"idle","kernel_usage":{"cpu":18.181818181797134,"memory":28811264},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":2},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython2","version":"2.7.15"}},"trust":false,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"030862","input":"","pos":47,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":1,"id":"002639","input":"n = 21\neuler_phi(n) #n=21=3*7 e portanto phi(21)=phi(3*7)=phi(3)*phi(5)=(3-1)*(7-1)","output":{"0":{"data":{"text/plain":"12"},"exec_count":1,"output_type":"execute_result"}},"pos":5,"scrolled":true,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":10,"id":"f5cea3","input":"Zn = IntegerModRing(n)\nZn","output":{"0":{"data":{"text/plain":"Ring of integers modulo 18"},"exec_count":10,"output_type":"execute_result"}},"pos":18,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":11,"id":"96a551","input":"euler_phi(n)","output":{"0":{"data":{"text/plain":"6"},"exec_count":11,"output_type":"execute_result"}},"pos":19,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":12,"id":"0ea906","input":"srr = [a for a in Zn if gcd(a, n)==1]\nsrr","output":{"0":{"data":{"text/plain":"[1, 5, 7, 11, 13, 17]"},"exec_count":12,"output_type":"execute_result"}},"pos":20,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":13,"id":"df4179","input":"a = Zn(11)\n[a^i for i in (1..6)]","output":{"0":{"data":{"text/plain":"[11, 13, 17, 7, 5, 1]"},"exec_count":13,"output_type":"execute_result"}},"pos":21,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":14,"id":"85b131","input":"b = Zn(5)\n[b^i for i in (1..6)]","output":{"0":{"data":{"text/plain":"[5, 7, 17, 13, 11, 1]"},"exec_count":14,"output_type":"execute_result"}},"pos":22,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":15,"id":"9a18ec","input":"c = Zn(17)\n[c^i for i in (1..6)]","output":{"0":{"data":{"text/plain":"[17, 1, 17, 1, 17, 1]"},"exec_count":15,"output_type":"execute_result"}},"pos":23,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":18,"id":"e38195","input":"n = 25\nZn = IntegerModRing(n)","pos":24,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":19,"id":"8cf617","input":"primitive_root(n)","output":{"0":{"data":{"text/plain":"2"},"exec_count":19,"output_type":"execute_result"}},"pos":25,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":2,"id":"830a6a","input":"Zn = IntegerModRing(n) # Zn é um scr mod n","pos":6,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":20,"id":"a0fe7b","input":"euler_phi(n)","output":{"0":{"data":{"text/plain":"20"},"exec_count":20,"output_type":"execute_result"}},"pos":26,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":21,"id":"30f869","input":"a = Zn(2)\na.multiplicative_order()","output":{"0":{"data":{"text/plain":"20"},"exec_count":21,"output_type":"execute_result"}},"pos":27,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":22,"id":"23f1f0","input":"srr = [k for k in Zn if gcd(k, n) == 1]\nsrr","output":{"0":{"data":{"text/plain":"[1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19, 21, 22, 23, 24]"},"exec_count":22,"output_type":"execute_result"}},"pos":29,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":23,"id":"001b36","input":"[a^x for x in (1..20)]","output":{"0":{"data":{"text/plain":"[2, 4, 8, 16, 7, 14, 3, 6, 12, 24, 23, 21, 17, 9, 18, 11, 22, 19, 13, 1]"},"exec_count":23,"output_type":"execute_result"}},"pos":30,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":24,"id":"5336cb","input":"[Zn(3)^x for x in (1..20)]","output":{"0":{"data":{"text/plain":"[3, 9, 2, 6, 18, 4, 12, 11, 8, 24, 22, 16, 23, 19, 7, 21, 13, 14, 17, 1]"},"exec_count":24,"output_type":"execute_result"}},"pos":31,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":25,"id":"c4892e","input":"Zn(3).multiplicative_order()","output":{"0":{"data":{"text/plain":"20"},"exec_count":25,"output_type":"execute_result"}},"pos":32,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":26,"id":"ada2df","input":"[Zn(6)^x for x in (1..20)]","output":{"0":{"data":{"text/plain":"[6, 11, 16, 21, 1, 6, 11, 16, 21, 1, 6, 11, 16, 21, 1, 6, 11, 16, 21, 1]"},"exec_count":26,"output_type":"execute_result"}},"pos":33,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":27,"id":"7f8232","input":"Zn(6)^2, Zn(6)^17","output":{"0":{"data":{"text/plain":"(11, 11)"},"exec_count":27,"output_type":"execute_result"}},"pos":34,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":28,"id":"0cf87c","input":"n","output":{"0":{"data":{"text/plain":"25"},"exec_count":28,"output_type":"execute_result"}},"pos":40,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":29,"id":"18e780","input":"primitive_root(n)","output":{"0":{"data":{"text/plain":"2"},"exec_count":29,"output_type":"execute_result"}},"pos":41,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"13b15e","input":"srr = [a for a in Zn if gcd(a, n) == 1]\nsrr #srr é um sistema reduzido de resíduos","output":{"0":{"data":{"text/plain":"[1, 2, 4, 5, 8, 10, 11, 13, 16, 17, 19, 20]"},"exec_count":3,"output_type":"execute_result"}},"pos":7,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":30,"id":"9eda23","input":"r = Zn(2)","pos":42,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":31,"id":"fe3fab","input":"srr","output":{"0":{"data":{"text/plain":"[1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19, 21, 22, 23, 24]"},"exec_count":31,"output_type":"execute_result"}},"pos":43,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":33,"id":"bfd0f2","input":"r^9","output":{"0":{"data":{"text/plain":"12"},"exec_count":33,"output_type":"execute_result"}},"pos":44,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":4,"id":"e13a9c","input":"a = srr[1]\na","output":{"0":{"data":{"text/plain":"2"},"exec_count":4,"output_type":"execute_result"}},"pos":8,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":5,"id":"6c5d02","input":"a^12 # Teorema de Euler","output":{"0":{"data":{"text/plain":"1"},"exec_count":5,"output_type":"execute_result"}},"pos":9,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":6,"id":"9ba273","input":"Potencias_a = [a^k for k in (1..12)]\nPotencias_a","output":{"0":{"data":{"text/plain":"[2, 4, 8, 16, 11, 1, 2, 4, 8, 16, 11, 1]"},"exec_count":6,"output_type":"execute_result"}},"pos":10,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":7,"id":"aff171","input":"multiplicative_order(Zn(2))","output":{"0":{"data":{"text/plain":"6"},"exec_count":7,"output_type":"execute_result"}},"pos":12,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":8,"id":"7468e8","input":"primitive_root(18)","output":{"0":{"data":{"text/plain":"11"},"exec_count":8,"output_type":"execute_result"}},"pos":16,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":9,"id":"3ac641","input":"n = 18","pos":17,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"03778c","input":"__Corolário__: $ord_m a | \\varphi(n)$.","pos":14,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"04469b","input":"$r\\in \\mathbb{Z}_n^*$ é __raiz primitiva__ de $n$ se $\\langle r \\rangle =  \\mathbb{Z}_n^*$, i.e., $ord_n\\ r = \\varphi(n)$.","pos":36,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"0c28d3","input":"__Corolário__: Todo o primo tem uma raíz primitiva.","pos":39,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"152162","input":"**Problema do logaritmo discreto** (PLD, DLP): como determinar $x$?","pos":46,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"562222","input":"Dado $a\\in \\mathbb{Z}_n^*$, o menor natural $x$ para o qual $a^x \\equiv 1 \\mod n$ é denominado por *ordem de $a$ módulo $n$*. \n\nÉ denotado por $ord_m\\, a$.","pos":11,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"660e0e","input":"$a\\in \\mathbb{Z}_n^*$ diz-se uma __raíz primitiva__ de $n$ se $\\varphi(n)$ for o menor natural $x$ para o qual $a^x \\equiv 1 \\mod n$.","pos":4,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"7c4e65","input":"Seja $r$ uma raíz primitiva de $n$. \n\n$ind_r a = x$ significa que $1\\le x\\le \\varphi(n)$ tal que $r^x \\equiv a \\mod n$.","pos":45,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"7e3ba0","input":"__Teorema__: $a^x \\equiv 1 \\mod n \\Leftrightarrow ord_m \\, a | x.$","pos":13,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"a805e7","input":"$\\langle 2\\rangle = \\mathbb{Z}_{25}^*$","pos":28,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"a9a5bb","input":"Seja $a\\in \\mathbb{Z}^*_n$, ou seja, $a\\in \\mathbb{Z}_n$ tal que $(a, n) = 1$.","pos":1,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"b716ff","input":"*Questão:* \n\nExiste $x$ com $1\\le x < \\varphi(n)$ para o qual $a^x \\equiv 1 \\mod n$?","pos":3,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"bf425f","input":"Pelo __Teorema de Euler__, \n$$a^{\\varphi{(n)}} \\equiv 1 \\mod n.$$","pos":2,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"c3da12","input":"# Raízes primitivas","pos":0,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"c470c3","input":"Portanto, $a$ é raíz primitiva de $n$ *se e só se* $ord_n a = \\varphi(n)$.","pos":15,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"cd8230","input":"__Teorema__: Para $a\\in \\mathbb{Z}_n^*$, $$a^i\\equiv a^j \\mod n \\Leftrightarrow i\\equiv j \\mod ord_n\\, a.$$","pos":35,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"d174e4","input":"__Teorema do índice__: Dada uma raíz primitiva $r$ de $n$ (se existir),  $$r^i\\equiv r^j \\mod n \\Leftrightarrow i\\equiv j \\mod \\varphi(n).$$","pos":37,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"e3f91d","input":"__Teorema__: $n$ possui uma raíz primitiva se e só se  $n$ é igual a $2$, $4$, $p^k$, $2p^k$, onde $p$ é um primo ímpar.","pos":38,"state":"done","type":"cell"}
+{"id":0,"time":1586292019270,"type":"user"}
+{"last_load":1586295928483,"type":"file"}

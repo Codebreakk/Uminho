@@ -1,0 +1,13 @@
+{"args":["--to","latex"],"start":1586280499826,"state":"done","time":1586280502132,"type":"nbconvert"}
+{"backend_state":"running","kernel":"sage-8.9","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":240250880},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":2},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython2","version":"2.7.15"}},"trust":true,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"8e48b5","input":"factorial_mod?","pos":1,"type":"cell"}
+{"cell_type":"code","exec_count":10,"id":"3d44c7","input":"[2*k+1 for k in range(1, 500) if pWilson(2*k+1)]","output":{"0":{"data":{"text/plain":"[5, 13, 563]"},"exec_count":10,"output_type":"execute_result"}},"pos":8,"type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"5bdd9e","input":"def factorial_mod(k, n):\n    \"\"\" funcao que calcula o factorial mod n\n        calcula k! mod n\n    \"\"\"\n    resultado = 1\n    for i in range(1, k+1):\n        resultado = mod(resultado*i, n)\n    return resultado","pos":0,"type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"c08bdb","input":"factorial_mod(16, 19)","output":{"0":{"data":{"text/plain":"9"},"exec_count":3,"output_type":"execute_result"}},"pos":2,"type":"cell"}
+{"cell_type":"code","exec_count":4,"id":"fa854a","input":"def primos_Wilson(n):\n    if not is_prime(n):\n        return False\n    if factorial_mod(n-1,n^2) == n^2-1:\n        return True\n    return False","pos":3,"type":"cell"}
+{"cell_type":"code","exec_count":6,"id":"6d198e","input":"primos_Wilson(9)","output":{"0":{"data":{"text/plain":"False"},"exec_count":6,"output_type":"execute_result"}},"pos":4,"type":"cell"}
+{"cell_type":"code","exec_count":7,"id":"ffeca3","input":"def pWilson(n):\n    pW = is_prime(n)\n    if pW:\n        pW = factorial_mod(n-1, n^2) == n^2-1\n    return pW","pos":5,"type":"cell"}
+{"cell_type":"code","exec_count":8,"id":"1f8eef","input":"pWilson(5)","output":{"0":{"data":{"text/plain":"True"},"exec_count":8,"output_type":"execute_result"}},"pos":6,"type":"cell"}
+{"cell_type":"code","exec_count":9,"id":"aa7119","input":"pWilson(13)","output":{"0":{"data":{"text/plain":"True"},"exec_count":9,"output_type":"execute_result"}},"pos":7,"type":"cell"}
+{"id":0,"time":1586280115742,"type":"user"}
+{"last_load":1586280115537,"type":"file"}

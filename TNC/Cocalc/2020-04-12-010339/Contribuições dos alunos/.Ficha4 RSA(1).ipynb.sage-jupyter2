@@ -1,0 +1,13 @@
+{"backend_state":"running","kernel":"sage-9.0","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":231792640},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.7.3"}},"trust":true,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"576f32","input":"","pos":1,"type":"cell"}
+{"cell_type":"code","exec_count":0,"id":"e6e85a","input":"","pos":9,"type":"cell"}
+{"cell_type":"code","exec_count":2,"id":"e6d292","input":"def decif(n,e,y):\n    f= factor(n)\n    p,_ = f[0]\n    q,_ = f[1]\n    phi = (p-1)*(q-1)\n    d = power_mod(e,-1,phi)\n    x = power_mod(y,d,n)\n    return x","pos":7,"type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"393edc","input":"decif(9342391600471856881,516835009790341993,1487195269633179588)","output":{"0":{"data":{"text/plain":"797665"},"exec_count":3,"output_type":"execute_result"}},"pos":8,"type":"cell"}
+{"cell_type":"code","exec_count":34,"id":"ea431d","input":"\"\"\"Ex 17\"\"\"\n\nn = 9342391600471856881\np= factor(n)\np","output":{"0":{"data":{"text/plain":"259962719 * 35937428399"},"exec_count":34,"output_type":"execute_result"}},"pos":0,"type":"cell"}
+{"cell_type":"code","exec_count":35,"id":"bd637c","input":"p = 259962719\nq = 35937428399\n\nphi = (p-1)*(q-1)\nphi","output":{"0":{"data":{"text/plain":"9342391564274465764"},"exec_count":35,"output_type":"execute_result"}},"pos":2,"type":"cell"}
+{"cell_type":"code","exec_count":36,"id":"80b05a","input":"e = 516835009790341993\n\nd = power_mod(e,-1,phi)\nd","output":{"0":{"data":{"text/plain":"1469197220213093137"},"exec_count":36,"output_type":"execute_result"}},"pos":3,"type":"cell"}
+{"cell_type":"code","exec_count":37,"id":"58f244","input":"y = 1487195269633179588\n\nx = power_mod(y,d,n)\nx","output":{"0":{"data":{"text/plain":"797665"},"exec_count":37,"output_type":"execute_result"}},"pos":4,"type":"cell"}
+{"cell_type":"code","exec_count":38,"id":"b90d47","input":"power_mod(x,e,n)","output":{"0":{"data":{"text/plain":"1487195269633179588"},"exec_count":38,"output_type":"execute_result"}},"pos":5,"type":"cell"}
+{"cell_type":"markdown","id":"a98470","input":"Função de decifração, argumentos n,e,y","pos":6,"type":"cell"}
+{"id":0,"time":1585840689270,"type":"user"}
+{"last_load":1585840643939,"type":"file"}

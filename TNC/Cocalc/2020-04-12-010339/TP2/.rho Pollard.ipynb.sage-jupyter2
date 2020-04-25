@@ -1,0 +1,22 @@
+{"backend_state":"running","kernel":"sage-9.0","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":232599552},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.7.3"}},"trust":true,"type":"settings"}
+{"cell_type":"code","end":1586446011769,"exec_count":1,"id":"e9a1ad","input":"def rho_Pollard(n, f, x0):\n    Zn = IntegerModRing(n)\n    a = Zn(f(x0))\n    b = Zn(f(a))\n    contador = 1\n    while gcd(b-a,n) == 1:\n        a = f(a)\n        b = f(f(b))\n        contador += 1\n    return gcd(b-a, n), contador\n    ","kernel":"sage-9.0","pos":14,"start":1586446011732,"state":"done","type":"cell"}
+{"cell_type":"code","end":1586446013741,"exec_count":2,"id":"e4b87c","input":"n = 4453","kernel":"sage-9.0","pos":15,"start":1586446013731,"state":"done","type":"cell"}
+{"cell_type":"code","end":1586446015238,"exec_count":3,"id":"eec999","input":"f = lambda x: x^2+1\nx0 = 2","kernel":"sage-9.0","pos":16,"start":1586446015232,"state":"done","type":"cell"}
+{"cell_type":"code","end":1586446016646,"exec_count":4,"id":"cdf00a","input":"rho_Pollard(n, f, x0)","kernel":"sage-9.0","output":{"0":{"data":{"text/plain":"(73, 6)"},"exec_count":4}},"pos":17,"start":1586446016637,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":0,"id":"004e89","input":"","pos":18,"type":"cell"}
+{"cell_type":"code","exec_count":1,"id":"ca2ff6","input":"f = lambda x: x^2+1\nf","output":{"0":{"data":{"text/plain":"<function <lambda> at 0x7fe769dfae18>"},"exec_count":1,"output_type":"execute_result"}},"pos":0,"type":"cell"}
+{"cell_type":"code","exec_count":11,"id":"707d6b","input":"a","output":{"0":{"data":{"text/plain":"5"},"exec_count":11,"output_type":"execute_result"}},"pos":9,"type":"cell"}
+{"cell_type":"code","exec_count":15,"id":"42ef3f","input":"a = x0\na","output":{"0":{"data":{"text/plain":"2"},"exec_count":15,"output_type":"execute_result"}},"pos":7,"type":"cell"}
+{"cell_type":"code","exec_count":17,"id":"9a9c02","input":"b = x0","pos":8,"type":"cell"}
+{"cell_type":"code","exec_count":18,"id":"1bda41","input":"b = f(f(b))\na = f(a)\ngcd(b-a, n)","output":{"0":{"data":{"text/plain":"1"},"exec_count":18,"output_type":"execute_result"}},"pos":10,"type":"cell"}
+{"cell_type":"code","exec_count":19,"id":"457993","input":"while gcd(b-a, n)==1:\n    b = f(f(b))\n    a = f(a)\ngcd(b-a, n)","output":{"0":{"data":{"text/plain":"41"},"exec_count":19,"output_type":"execute_result"}},"pos":11,"type":"cell"}
+{"cell_type":"code","exec_count":2,"id":"72b8ce","input":"f(2)","output":{"0":{"data":{"text/plain":"5"},"exec_count":2,"output_type":"execute_result"}},"pos":1,"type":"cell"}
+{"cell_type":"code","exec_count":20,"id":"339484","input":"41.divides(n)","output":{"0":{"data":{"text/plain":"True"},"exec_count":20,"output_type":"execute_result"}},"pos":12,"type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"a12880","input":"n = 1189","pos":2,"type":"cell"}
+{"cell_type":"code","exec_count":37,"id":"624959","input":"f = lambda x: x^3+x+1\nx0 = 3","pos":13,"type":"cell"}
+{"cell_type":"code","exec_count":5,"id":"348ae0","input":"n.is_prime()","output":{"0":{"data":{"text/plain":"False"},"exec_count":5,"output_type":"execute_result"}},"pos":3,"type":"cell"}
+{"cell_type":"code","exec_count":6,"id":"379d0a","input":"Zn = IntegerModRing(n)\nZn","output":{"0":{"data":{"text/plain":"Ring of integers modulo 1189"},"exec_count":6,"output_type":"execute_result"}},"pos":4,"type":"cell"}
+{"cell_type":"code","exec_count":7,"id":"73196c","input":"is_field(Zn)","output":{"0":{"data":{"text/plain":"False"},"exec_count":7,"output_type":"execute_result"}},"pos":5,"type":"cell"}
+{"cell_type":"code","exec_count":8,"id":"91e14d","input":"x0 = Zn(2)","pos":6,"type":"cell"}
+{"id":0,"time":1586443696732,"type":"user"}
+{"last_load":1586445615610,"type":"file"}

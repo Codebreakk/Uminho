@@ -1,0 +1,18 @@
+{"backend_state":"ready","kernel":"sage-9.0","kernel_state":"idle","kernel_usage":{"cpu":31.001890359173785,"memory":232873984},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.7.3"}},"trust":true,"type":"settings"}
+{"cell_type":"code","exec_count":1,"id":"25360b","input":"a, b, n = 333333333, 87543211376, 967454302211","pos":1,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":10,"id":"703fb5","input":"mod(a*sol, n) == mod(b, n)","output":{"0":{"data":{"text/plain":"True"},"exec_count":10,"output_type":"execute_result"}},"pos":8,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":12,"id":"8d8fbe","input":"Zn = IntegerModRing(n)\naa = Zn(a)\nsol = 1/aa * b\nsol","output":{"0":{"data":{"text/plain":"913523349503"},"exec_count":12,"output_type":"execute_result"}},"pos":9,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":13,"id":"4f244d","input":"sol1 = crt(24, 75, 100, 99)\nsol1","output":{"0":{"data":{"text/plain":"5124"},"exec_count":13,"output_type":"execute_result"}},"pos":11,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":14,"id":"9c0afc","input":"sol = crt(sol1, 92, 100*99, 97)\nsol","output":{"0":{"data":{"text/plain":"24924"},"exec_count":14,"output_type":"execute_result"}},"pos":12,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":15,"id":"5511ea","input":"124*201","output":{"0":{"data":{"text/plain":"24924"},"exec_count":15,"output_type":"execute_result"}},"pos":13,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":4,"id":"55b8b2","input":"gcd(a, n).divides(b)","output":{"0":{"data":{"text/plain":"True"},"exec_count":4,"output_type":"execute_result"}},"pos":2,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":5,"id":"3bc03a","input":"gcd(a, n)","output":{"0":{"data":{"text/plain":"1"},"exec_count":5,"output_type":"execute_result"}},"pos":3,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":6,"id":"323ed0","input":"xgcd(a, n)","output":{"0":{"data":{"text/plain":"(1, 286506252506, -98714827)"},"exec_count":6,"output_type":"execute_result"}},"pos":4,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":7,"id":"206133","input":"d, x0, _ = xgcd(a, n)","pos":5,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":8,"id":"2566ad","input":"d, x0","output":{"0":{"data":{"text/plain":"(1, 286506252506)"},"exec_count":8,"output_type":"execute_result"}},"pos":6,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":9,"id":"896425","input":"sol = mod(b*x0, n)\nsol","output":{"0":{"data":{"text/plain":"913523349503"},"exec_count":9,"output_type":"execute_result"}},"pos":7,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"0f35b7","input":"10 c)\n\n$124 \\times 201$","pos":10,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"61ddb9","input":"Folha 2, 8b)\n\n$333333333x \\equiv 87543211376 \\mod 967454302211$","pos":0,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"a8220c","input":"","pos":14,"state":"done","type":"cell"}
+{"id":0,"time":1587406208841,"type":"user"}
+{"last_load":1587221152827,"type":"file"}

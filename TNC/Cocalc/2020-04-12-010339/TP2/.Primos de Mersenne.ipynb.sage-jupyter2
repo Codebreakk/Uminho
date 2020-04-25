@@ -1,0 +1,13 @@
+{"backend_state":"running","kernel":"sage-8.9","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":240877568},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":2},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython2","version":"2.7.15"}},"trust":true,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"58da5a","input":"","pos":9,"type":"cell"}
+{"cell_type":"code","exec_count":1,"id":"bf9c6b","input":"p = 5","pos":0,"type":"cell"}
+{"cell_type":"code","exec_count":10,"id":"46d7e2","input":"r = Zn(4)\nfor i in range(2, p):\n    r = r^2-2\nr","output":{"0":{"data":{"text/plain":"0"},"exec_count":10,"output_type":"execute_result"}},"pos":8,"type":"cell"}
+{"cell_type":"code","exec_count":2,"id":"715637","input":"M5 = 2^5-1 #numero de Mersenne","pos":1,"type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"e4e85a","input":"Zn = IntegerModRing(M5)","pos":2,"type":"cell"}
+{"cell_type":"code","exec_count":4,"id":"f20f91","input":"r = Zn(4)","pos":3,"type":"cell"}
+{"cell_type":"code","exec_count":5,"id":"1a0465","input":"r = r^2-2 #r2","pos":4,"type":"cell"}
+{"cell_type":"code","exec_count":6,"id":"23bac6","input":"r = r^2-2 #r3","pos":5,"type":"cell"}
+{"cell_type":"code","exec_count":7,"id":"628e73","input":"r = r^2-2 #r4","pos":6,"type":"cell"}
+{"cell_type":"code","exec_count":8,"id":"e801a2","input":"r","output":{"0":{"data":{"text/plain":"0"},"exec_count":8,"output_type":"execute_result"}},"pos":7,"type":"cell"}
+{"id":0,"time":1585182535254,"type":"user"}
+{"last_load":1585183511037,"type":"file"}

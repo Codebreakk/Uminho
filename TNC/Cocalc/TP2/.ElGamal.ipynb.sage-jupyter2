@@ -1,0 +1,15 @@
+{"backend_state":"ready","kernel":"sagemath","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":241053696},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":2},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython2","version":"2.7.15"}},"trust":true,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"5890ef","input":"","pos":11,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":1,"id":"e5582f","input":"p = random_prime(2^128, 2^127)\np","output":{"0":{"data":{"text/plain":"111364082720737472753397926767202436497"},"exec_count":1,"output_type":"execute_result"}},"pos":0,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":18,"id":"b02a72","input":"k = randint(2, p-2)","pos":8,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":19,"id":"7d81ff","input":"gama, delta = r^k, mens*b^k\ngama, delta","output":{"0":{"data":{"text/plain":"(4280493506321579873266801952788321033, 74658794288698392777370235401242797694)"},"exec_count":19,"output_type":"execute_result"}},"pos":9,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":2,"id":"845bbe","input":"Zp = IntegerModRing(p)","pos":1,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":20,"id":"d4cb6a","input":"1/(gama^a) * delta","output":{"0":{"data":{"text/plain":"1234"},"exec_count":20,"output_type":"execute_result"}},"pos":10,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"595bd8","input":"r = Zp.multiplicative_generator()\nr","output":{"0":{"data":{"text/plain":"3"},"exec_count":3,"output_type":"execute_result"}},"pos":2,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":4,"id":"78dce9","input":"a = randint(2,p-2)\na","output":{"0":{"data":{"text/plain":"80525683845120129048165065832097781L"},"exec_count":4,"output_type":"execute_result"}},"pos":3,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":5,"id":"5f90f8","input":"b = r^a","pos":4,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":6,"id":"2dc244","input":"PubK = (p, r, b)\nPrivK = a","pos":5,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":7,"id":"cb1f8a","input":"PubK, PrivK","output":{"0":{"data":{"text/plain":"((111364082720737472753397926767202436497,\n  3,\n  101796837342813948250020169542232678503),\n 80525683845120129048165065832097781L)"},"exec_count":7,"output_type":"execute_result"}},"pos":6,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":8,"id":"1741b7","input":"mens = 1234","pos":7,"state":"done","type":"cell"}
+{"id":0,"time":1587487720733,"type":"user"}
+{"last_load":1587487086829,"type":"file"}

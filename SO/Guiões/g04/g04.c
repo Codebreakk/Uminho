@@ -9,11 +9,24 @@
 *   mente para saida.txt e erros.txt.
 */
 int ex1(){
-  // Verificar se open() executou correctamente.
   int input_fd = open("/etc/passwd", O_RDONLY);
-  int output_fd = open("saida.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-  int error_fd = open("erros.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  // Verificar se open() executou correctamente.
+  if(input_fd < 0){
+    perror("open");
+    _exit(1);
+  }
 
+  int output_fd = open("saida.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  if(output_fd < 0){
+    perror("open");
+    _exit(1);
+  }
+
+  int error_fd = open("erros.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  if(error_fd < 0){
+    perror("open");
+    _exit(1);
+  }
   // fd -> recurso
   // 0 (stdin) -> teclado
   // 1 (stdout) -> ecra
@@ -53,8 +66,22 @@ int ex1(){
 int ex2(){
   // Verificar se open() executou correctamente.
   int input_fd = open("/etc/passwd", O_RDONLY);
+  if(input_fd < 0){
+    perror("open");
+    _exit(1);
+  }
+
   int output_fd = open("saida.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  if(output_fd < 0){
+    perror("open");
+    _exit(1);
+  }
+
   int error_fd = open("erros.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  if(error_fd < 0){
+    perror("open");
+    _exit(1);
+  }
 
   // fd -> recurso
   // 0 (stdin) -> teclado
@@ -110,8 +137,22 @@ int ex2(){
 int ex3(){
   // Verificar se open() executou correctamente.
   int input_fd = open("/etc/passwd", O_RDONLY);
+  if(input_fd < 0){
+    perror("open");
+    _exit(1);
+  }
+
   int output_fd = open("saida.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  if(output_fd < 0){
+    perror("open");
+    _exit(1);
+  }
+
   int error_fd = open("erros.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  if(error_fd < 0){
+    perror("open");
+    _exit(1);
+  }
 
   // fd -> recurso
   // 0 (stdin) -> teclado
@@ -161,21 +202,37 @@ int ex4(int argc, const char* argv[]){
 
   if(strcmp(argv[1], "-i") == 0){
     input_fd = open(argv[2], O_RDONLY);
+    if(input_fd < 0){
+      perror("open");
+      _exit(1);
+    }
     dup2(input_fd, 0);
   }
 
   if(strcmp(argv[3], "-o") == 0){
     output_fd = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if(output_fd < 0){
+      perror("open");
+      _exit(1);
+    }
     dup2(output_fd, 1);
   }
 
   if(strcmp(argv[1], "-o") == 0){
     output_fd = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if(output_fd < 0){
+      perror("open");
+      _exit(1);
+    }
     dup2(output_fd, 1);
   }
 
   if(strcmp(argv[3], "-i") == 0){
     input_fd = open(argv[4], O_RDONLY);
+    if(input_fd < 0){
+      perror("open");
+      _exit(1);
+    }
     dup2(input_fd, 0);
   }
 

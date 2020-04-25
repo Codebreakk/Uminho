@@ -1,13 +1,9 @@
 CC = gcc
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -I ../../mysolib/
 
 all: clean main
 
-main: main.o g04.o
-
-main.o: main.c main.h
-
-g01: g04.c main.h
+main: main.o g04.o ../../mysolib/my_printf.o
 
 run:
 	./main

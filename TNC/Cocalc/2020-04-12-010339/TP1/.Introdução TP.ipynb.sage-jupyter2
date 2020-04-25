@@ -1,0 +1,18 @@
+{"backend_state":"running","kernel":"sage-9.0","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":230920192},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.7.3"}},"trust":true,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"7909ee","input":"","pos":14,"type":"cell"}
+{"cell_type":"code","exec_count":1,"id":"4eece2","input":"a = 125\nn = 317","pos":0,"type":"cell"}
+{"cell_type":"code","exec_count":10,"id":"f3f3a2","input":"power_mod(a, -1, n)","output":{"0":{"data":{"text/plain":"246"},"exec_count":10,"output_type":"execute_result"}},"pos":6,"type":"cell"}
+{"cell_type":"code","exec_count":11,"id":"0226c2","input":"Zn = IntegerModRing(n)\nZn","output":{"0":{"data":{"text/plain":"Ring of integers modulo 317"},"exec_count":11,"output_type":"execute_result"}},"pos":7,"type":"cell"}
+{"cell_type":"code","exec_count":12,"id":"1746f4","input":"Zn.is_field()","output":{"0":{"data":{"text/plain":"True"},"exec_count":12,"output_type":"execute_result"}},"pos":8,"type":"cell"}
+{"cell_type":"code","exec_count":13,"id":"d09bad","input":"type(a)","output":{"0":{"data":{"text/plain":"<class 'sage.rings.integer.Integer'>"},"exec_count":13,"output_type":"execute_result"}},"pos":9,"type":"cell"}
+{"cell_type":"code","exec_count":14,"id":"892f7a","input":"a = Zn(125)\ntype(a)","output":{"0":{"data":{"text/plain":"<class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>"},"exec_count":14,"output_type":"execute_result"}},"pos":10,"type":"cell"}
+{"cell_type":"code","exec_count":15,"id":"6fe2ed","input":"3*a","output":{"0":{"data":{"text/plain":"58"},"exec_count":15,"output_type":"execute_result"}},"pos":11,"type":"cell"}
+{"cell_type":"code","exec_count":16,"id":"49ece3","input":"Zn(3)*a","output":{"0":{"data":{"text/plain":"58"},"exec_count":16,"output_type":"execute_result"}},"pos":12,"type":"cell"}
+{"cell_type":"code","exec_count":17,"id":"bd12bf","input":"1/a","output":{"0":{"data":{"text/plain":"246"},"exec_count":17,"output_type":"execute_result"}},"pos":13,"type":"cell"}
+{"cell_type":"code","exec_count":2,"id":"36cc0e","input":"gcd(a, n)","output":{"0":{"data":{"text/plain":"1"},"exec_count":2,"output_type":"execute_result"}},"pos":1,"type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"e30ea4","input":"xgcd(a, n)","output":{"0":{"data":{"text/plain":"(1, -71, 28)"},"exec_count":3,"output_type":"execute_result"}},"pos":2,"type":"cell"}
+{"cell_type":"code","exec_count":6,"id":"2e7fbd","input":"inv_a = n + xgcd(a,n)[1]\ninv_a","output":{"0":{"data":{"text/plain":"246"},"exec_count":6,"output_type":"execute_result"}},"pos":3,"type":"cell"}
+{"cell_type":"code","exec_count":8,"id":"85ffd8","input":"mod(a*inv_a, n)","output":{"0":{"data":{"text/plain":"1"},"exec_count":8,"output_type":"execute_result"}},"pos":4,"type":"cell"}
+{"cell_type":"code","exec_count":9,"id":"67087e","input":"(a*inv_a)%n","output":{"0":{"data":{"text/plain":"1"},"exec_count":9,"output_type":"execute_result"}},"pos":5,"type":"cell"}
+{"id":0,"time":1586282131798,"type":"user"}
+{"last_load":1585333837530,"type":"file"}

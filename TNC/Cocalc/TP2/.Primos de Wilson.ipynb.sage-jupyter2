@@ -1,0 +1,8 @@
+{"backend_state":"ready","kernel":"sage-9.0","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":231641088},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.7.3"}},"trust":true,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"df239b","input":"","pos":4,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":1,"id":"74de43","input":"def factorial_mod(k, n):\n    \"\"\" funcao que calcula o factorial modular\n    \"\"\"\n    factorial = 1\n    for i in range(1, k+1):\n        factorial = mod(factorial*i, n)\n    return factorial","pos":0,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":2,"id":"5fa3ac","input":"factorial_mod(13, 31)","output":{"0":{"data":{"text/plain":"22"},"exec_count":2,"output_type":"execute_result"}},"pos":1,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"1c1238","input":"def primo_Wilson(p):\n    primoW = is_prime(p)\n    if primoW:\n        primoW = factorial_mod(p-1, p^2) == p^2-1\n    return primoW","pos":2,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":4,"id":"c32af0","input":"[2*k+1 for k in range(1, 500) if primo_Wilson(2*k+1)]","output":{"0":{"data":{"text/plain":"[5, 13, 563]"},"exec_count":4,"output_type":"execute_result"}},"pos":3,"state":"done","type":"cell"}
+{"id":0,"time":1587485286996,"type":"user"}
+{"last_load":1587485286697,"type":"file"}

@@ -1,0 +1,19 @@
+{"backend_state":"running","kernel":"sage-8.9","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":241414144},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":2},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython2","version":"2.7.15"}},"trust":true,"type":"settings"}
+{"cell_type":"code","end":1587512996530,"exec_count":1,"id":"e00f51","input":"p = 2^2*3^3*5+1\nis_prime(p)","kernel":"sage-8.9","output":{"0":{"data":{"text/plain":"True"},"exec_count":1}},"pos":0,"start":1587512996503,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587512997507,"exec_count":2,"id":"0368b0","input":"p","kernel":"sage-8.9","output":{"0":{"data":{"text/plain":"541"},"exec_count":2}},"pos":1,"start":1587512997497,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587512998002,"exec_count":3,"id":"c5b2b5","input":"n = p*next_prime(600)","kernel":"sage-8.9","pos":2,"start":1587512997995,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587512998283,"exec_count":4,"id":"0ef186","input":"n","kernel":"sage-8.9","output":{"0":{"data":{"text/plain":"325141"},"exec_count":4}},"pos":3,"start":1587512998274,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587512998505,"exec_count":5,"id":"fb93a3","input":"Zn = IntegerModRing(n)","kernel":"sage-8.9","pos":4,"start":1587512998482,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587512998907,"exec_count":6,"id":"26ec1b","input":"r = Zn(2)\nk = 1","kernel":"sage-8.9","pos":5,"start":1587512998900,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587512999139,"exec_count":7,"id":"2874e8","input":"while gcd(r-1, n) == 1:\n    k = k+1\n    r = r^k\ngcd(r-1, n)","kernel":"sage-8.9","output":{"0":{"data":{"text/plain":"541"},"exec_count":7}},"pos":6,"start":1587512999129,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587512999509,"exec_count":8,"id":"68e996","input":"k","kernel":"sage-8.9","output":{"0":{"data":{"text/plain":"9"},"exec_count":8}},"pos":7,"start":1587512999499,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587512999826,"exec_count":9,"id":"046f56","input":"def pmenosum(n):\n    Zn = IntegerModRing(n)\n    r = Zn(2)\n    k = 1\n    while gcd(r-1, n) == 1:\n        k = k+1\n        r = r^k\n    return gcd(r-1, n)","kernel":"sage-8.9","pos":8,"start":1587512999820,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587513000235,"exec_count":10,"id":"7660f5","input":"pmenosum(325141)","kernel":"sage-8.9","output":{"0":{"data":{"text/plain":"541"},"exec_count":10}},"pos":9,"start":1587513000224,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587513000342,"exec_count":11,"id":"75f8ce","input":"999999999%6","kernel":"sage-8.9","output":{"0":{"data":{"text/plain":"3"},"exec_count":11}},"pos":10,"start":1587513000240,"state":"done","type":"cell"}
+{"cell_type":"code","end":1587513056557,"exec_count":2,"id":"8488eb","input":"power_mod(3, 999999999, 7)","kernel":"sage-8.9","output":{"0":{"data":{"text/plain":"6"},"exec_count":2}},"pos":12,"start":1587513056345,"state":"done","type":"cell"}
+{"cell_type":"code","id":"e6744b","input":"","pos":13,"state":"done","type":"cell"}
+{"cell_type":"code","id":"eec259","input":"3^999999999 % 7","kernel":"sage-8.9","pos":11,"state":"done","type":"cell"}
+{"id":"28c62f","input":"","pos":7.5,"type":"cell"}
+{"id":"7da6e6","input":"","pos":14,"state":"done","type":"cell"}
+{"id":0,"time":1587512923655,"type":"user"}
+{"last_load":1587512923986,"type":"file"}

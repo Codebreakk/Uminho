@@ -1,0 +1,13 @@
+{"backend_state":"running","kernel":"sagemath","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":240574464},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":2},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython2","version":"2.7.15"}},"trust":true,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"4a3985","input":"","pos":9,"type":"cell"}
+{"cell_type":"code","exec_count":1,"id":"8d210f","input":"p = random_prime(2^128, 2^127)\np","output":{"0":{"data":{"text/plain":"110968789429813725181225824332849275811"},"exec_count":1,"output_type":"execute_result"}},"pos":0,"type":"cell"}
+{"cell_type":"code","exec_count":12,"id":"a875bf","input":"k = randint(2, p-2)","pos":6,"type":"cell"}
+{"cell_type":"code","exec_count":13,"id":"f8e676","input":"gama = r^k\ndelta = mens*b^k\ngama, delta","output":{"0":{"data":{"text/plain":"(52315142067052243843128824723710086159,\n 90665648777699683340980938660883489694)"},"exec_count":13,"output_type":"execute_result"}},"pos":7,"type":"cell"}
+{"cell_type":"code","exec_count":14,"id":"434e67","input":"1/gama^a * delta","output":{"0":{"data":{"text/plain":"1234"},"exec_count":14,"output_type":"execute_result"}},"pos":8,"type":"cell"}
+{"cell_type":"code","exec_count":2,"id":"b5f251","input":"Zp = IntegerModRing(p)","pos":1,"type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"f5f277","input":"r = Zp.multiplicative_generator()\nr","output":{"0":{"data":{"text/plain":"2"},"exec_count":3,"output_type":"execute_result"}},"pos":2,"type":"cell"}
+{"cell_type":"code","exec_count":4,"id":"d54682","input":"a = randint(2, p-2)\nb = r^a","pos":3,"type":"cell"}
+{"cell_type":"code","exec_count":5,"id":"40bf88","input":"PubK = (p, r, b)\nPrivK = a\nPubK, PrivK","output":{"0":{"data":{"text/plain":"((110968789429813725181225824332849275811,\n  2,\n  94996900948953532276656855838994899443),\n 67776067096654264995169201371843742488L)"},"exec_count":5,"output_type":"execute_result"}},"pos":4,"type":"cell"}
+{"cell_type":"code","exec_count":6,"id":"c70619","input":"mens = 1234","pos":5,"type":"cell"}
+{"id":0,"time":1587390559350,"type":"user"}
+{"last_load":1587390548718,"type":"file"}

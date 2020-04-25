@@ -1,0 +1,24 @@
+{"backend_state":"running","kernel":"sagemath","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":240869376},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":2},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython2","version":"2.7.15"}},"trust":false,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"dbb1b0","input":"","pos":20,"type":"cell"}
+{"cell_type":"code","exec_count":10,"id":"a790a6","input":"m = (p-1)*(q-1)\nm # m = phi(n)","output":{"0":{"data":{"text/plain":"35280"},"exec_count":10,"output_type":"execute_result"}},"pos":8,"type":"cell"}
+{"cell_type":"code","exec_count":11,"id":"6c8806","input":"Zn = IntegerModRing(n)\nZm = IntegerModRing(m)","pos":9,"type":"cell"}
+{"cell_type":"code","exec_count":28,"id":"4792a4","input":"e = Zm.random_element()\ngcd(e, m) == 1","output":{"0":{"data":{"text/plain":"True"},"exec_count":28,"output_type":"execute_result"}},"pos":10,"type":"cell"}
+{"cell_type":"code","exec_count":29,"id":"87e99e","input":"e","output":{"0":{"data":{"text/plain":"30431"},"exec_count":29,"output_type":"execute_result"}},"pos":11,"type":"cell"}
+{"cell_type":"code","exec_count":30,"id":"06aa95","input":"e = Zm(4363)","pos":12,"type":"cell"}
+{"cell_type":"code","exec_count":31,"id":"e20b14","input":"d = 1/e\nd","output":{"0":{"data":{"text/plain":"30307"},"exec_count":31,"output_type":"execute_result"}},"pos":13,"type":"cell"}
+{"cell_type":"code","exec_count":32,"id":"644f76","input":"PubKey = (n, e)\nPrivKey = d","pos":14,"type":"cell"}
+{"cell_type":"code","exec_count":33,"id":"d2b61c","input":"x = 1234\ny = Zn(x)^e\ny","output":{"0":{"data":{"text/plain":"25642"},"exec_count":33,"output_type":"execute_result"}},"pos":17,"type":"cell"}
+{"cell_type":"code","exec_count":34,"id":"acdc39","input":"y^d","output":{"0":{"data":{"text/plain":"1234"},"exec_count":34,"output_type":"execute_result"}},"pos":19,"type":"cell"}
+{"cell_type":"code","exec_count":7,"id":"971bd7","input":"p = random_prime(200, lbound=150)\nq = random_prime(200, lbound=150)\np, q","output":{"0":{"data":{"text/plain":"(181, 197)"},"exec_count":7,"output_type":"execute_result"}},"pos":6,"type":"cell"}
+{"cell_type":"code","exec_count":8,"id":"75244b","input":"p, q = 181, 197\nn = p*q\nn","output":{"0":{"data":{"text/plain":"35657"},"exec_count":8,"output_type":"execute_result"}},"pos":7,"type":"cell"}
+{"cell_type":"markdown","id":"2a2548","input":"## Rivest, Shamir, Adleman, 1977","pos":1,"type":"cell"}
+{"cell_type":"markdown","id":"347fd5","input":"A *chave pública* é o par $(n, e)$.\n\nA *chave privada* é $d$.","pos":5,"type":"cell"}
+{"cell_type":"markdown","id":"6465bf","input":"Suponhamos que Alice pretende enviar uma mensagem $x$ a Bob (pode ser, por exemplo, o pin do cartão MB).\nAlice consulta a chave pública de Bob e cifra a mensagem. Bob, usando a chave privada (que só ele conhece) decifra o criptograma $y$ enviado por Alice e obtem a mensagem original $x$.","pos":2,"type":"cell"}
+{"cell_type":"markdown","id":"8686f4","input":"Alice pretende enviar $x=1234$ a Bob, usando a chave pública de Bob.\nAlice calcula $y = x^e \\mod n$ e envia $y$ a Bob.","pos":16,"type":"cell"}
+{"cell_type":"markdown","id":"9917e4","input":"Bob escolhe dois primos distintos $p$ e $q$ e calcula $n=pq$. Bob calcula também $\\varphi(n)=\\varphi(pq)=(p-1)(q-1)$.\n\nBob escolhe ainda $e\\in \\mathbb{Z}_{\\varphi(n)}^*$, ou seja, $e\\in \\mathbb{Z}_{\\varphi(n)}$ com $(e, \\varphi(n))=1$. Calcula $d = e^{-1}$ em $\\mathbb{Z}_{\\varphi(n)}$.","pos":4,"type":"cell"}
+{"cell_type":"markdown","id":"ac5063","input":"### Criação da Chave Pública","pos":3,"type":"cell"}
+{"cell_type":"markdown","id":"af61cf","input":"# RSA","pos":0,"type":"cell"}
+{"cell_type":"markdown","id":"e95137","input":"### Cifração","pos":15,"type":"cell"}
+{"cell_type":"markdown","id":"f02336","input":"Bob recebe o criptograma $y$ de Alice; decifra-o fazendo $y^d \\mod n$.","pos":18,"type":"cell"}
+{"id":0,"time":1585749953469,"type":"user"}
+{"last_load":1585753556119,"type":"file"}

@@ -1,0 +1,6 @@
+{"backend_state":"running","kernel":"sage-8.9","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":241545216},"trust":true,"type":"settings"}
+{"cell_type":"code","end":1585184336158,"exec_count":3,"id":"67421b","input":"pmenosum(31*47)","kernel":"sage-8.9","output":{"0":{"data":{"text/plain":"31"},"exec_count":3}},"pos":1,"start":1585184336134,"state":"done","type":"cell"}
+{"end":1585184335542,"exec_count":2,"id":"9c9066","input":"def pmenosum(n):\n    Zn = IntegerModRing(n)\n    r = Zn(2)\n    k = 1\n    while gcd(r-1,n) == 1:\n        k = k + 1\n        r = r^k\n    return gcd(r-1, n)","kernel":"sage-8.9","pos":0,"start":1585184335527,"state":"done","type":"cell"}
+{"id":"5b795c","input":"","pos":4,"type":"cell"}
+{"id":0,"time":1585184278861,"type":"user"}
+{"last_load":1582711492644,"type":"file"}

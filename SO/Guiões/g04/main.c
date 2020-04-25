@@ -12,7 +12,7 @@ int main(int argc, const char* argv[]){
   //ex3();
 
   // Exercício 4
-  ex4(argc, argv);
+  //ex4(argc, argv);
 
   _exit(0);
 }

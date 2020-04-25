@@ -1,0 +1,10 @@
+{"args":["--to","latex"],"start":1586282210141,"state":"done","time":1586282212123,"type":"nbconvert"}
+{"backend_state":"running","kernel":"sagemath","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":241184768},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":2},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython2","version":"2.7.15"}},"trust":true,"type":"settings"}
+{"cell_type":"code","end":1586282177791,"exec_count":1,"id":"5e3f77","input":"n = 11\nZn = IntegerModRing(n)","kernel":"sagemath","pos":0,"start":1586282177785,"state":"done","type":"cell"}
+{"cell_type":"code","end":1586282179776,"exec_count":2,"id":"90fde7","input":"a = Zn(2)","kernel":"sagemath","pos":1,"start":1586282177796,"state":"done","type":"cell"}
+{"cell_type":"code","end":1586282181178,"exec_count":3,"id":"45c1f4","input":"order(a)","kernel":"sagemath","output":{"0":{"data":{"text/plain":"11"},"exec_count":3}},"pos":2,"start":1586282179785,"state":"done","type":"cell"}
+{"cell_type":"code","end":1586282182374,"exec_count":4,"id":"26261c","input":"multiplicative_order(a)","kernel":"sagemath","output":{"0":{"data":{"text/plain":"10"},"exec_count":4}},"pos":3,"start":1586282181186,"state":"done","type":"cell"}
+{"cell_type":"code","end":1586282183048,"exec_count":5,"id":"ed668b","input":"[a^k for k in range(1, 11)]","kernel":"sagemath","output":{"0":{"data":{"text/plain":"[2, 4, 8, 5, 10, 9, 7, 3, 6, 1]"},"exec_count":5}},"pos":4,"start":1586282182391,"state":"done","type":"cell"}
+{"cell_type":"code","end":1586282184177,"exec_count":6,"id":"af91f5","input":"a^5","kernel":"sagemath","output":{"0":{"data":{"text/plain":"10"},"exec_count":6}},"pos":5,"start":1586282183052,"state":"done","type":"cell"}
+{"id":0,"time":1586282138660,"type":"user"}
+{"last_load":1586282138573,"type":"file"}

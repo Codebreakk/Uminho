@@ -1,0 +1,36 @@
+{"backend_state":"ready","kernel":"sagemath","kernel_state":"idle","kernel_usage":{"cpu":19.085487077539206,"memory":241512448},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":2},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython2","version":"2.7.15"}},"trust":false,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"12c97f","input":"","pos":32,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":1,"id":"3c7b8e","input":"Mers = lambda x: 2^x-1","pos":5,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":10,"id":"7c5b61","input":"aliq(6)","output":{"0":{"data":{"text/plain":"6"},"exec_count":10,"output_type":"execute_result"}},"pos":17,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":11,"id":"ea14ef","input":"aliq(10)","output":{"0":{"data":{"text/plain":"8"},"exec_count":11,"output_type":"execute_result"}},"pos":18,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":12,"id":"6bce9b","input":"aliq(12)","output":{"0":{"data":{"text/plain":"16"},"exec_count":12,"output_type":"execute_result"}},"pos":19,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":13,"id":"1b5de0","input":"[k for k in range(1, 10000) if aliq(k) == k]","output":{"0":{"data":{"text/plain":"[6, 28, 496, 8128]"},"exec_count":13,"output_type":"execute_result"}},"pos":21,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":14,"id":"12fb71","input":"Mers(2)*(Mers(2-1)+1)","output":{"0":{"data":{"text/plain":"6"},"exec_count":14,"output_type":"execute_result"}},"pos":22,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":15,"id":"04fdcf","input":"Mers(3)*(Mers(3-1)+1)","output":{"0":{"data":{"text/plain":"28"},"exec_count":15,"output_type":"execute_result"}},"pos":23,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":16,"id":"e72471","input":"[Mers(p)*(Mers(p-1)+1) for p in range(1, 8) if p in Primes()]","output":{"0":{"data":{"text/plain":"[6, 28, 496, 8128]"},"exec_count":16,"output_type":"execute_result"}},"pos":24,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":2,"id":"35308d","input":"Mers(5)","output":{"0":{"data":{"text/plain":"31"},"exec_count":2,"output_type":"execute_result"}},"pos":6,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":3,"id":"baf361","input":"Mers(7)","output":{"0":{"data":{"text/plain":"127"},"exec_count":3,"output_type":"execute_result"}},"pos":7,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":4,"id":"9b7cd3","input":"Mers(11)","output":{"0":{"data":{"text/plain":"2047"},"exec_count":4,"output_type":"execute_result"}},"pos":8,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":5,"id":"3783fe","input":"is_prime(Mers(11))","output":{"0":{"data":{"text/plain":"False"},"exec_count":5,"output_type":"execute_result"}},"pos":9,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":6,"id":"c20117","input":"n = 6","pos":13,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":7,"id":"7c5275","input":"divisores = n.divisors()\ndivisores","output":{"0":{"data":{"text/plain":"[1, 2, 3, 6]"},"exec_count":7,"output_type":"execute_result"}},"pos":14,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":8,"id":"3a8599","input":"sum(divisores)","output":{"0":{"data":{"text/plain":"12"},"exec_count":8,"output_type":"execute_result"}},"pos":15,"state":"done","type":"cell"}
+{"cell_type":"code","exec_count":9,"id":"8a3da7","input":"aliq = lambda x: sum(divisors(x))-x","pos":16,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"06f20f","input":"Teorema de Euclides-Euler:\n\nUm número par $n$ é perfeito se e só se for da forma $n=M_p (M_{p-1}+1)=\\displaystyle\\frac{M_p(M_p+1)}{2}=(2^p-1)2^{p-1}$ para algum primo de Mersènne $M_p$.","pos":25,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"103b11","input":"Portanto, se $n$ é composto então $2^n-1$ é composto.","pos":3,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"255f5a","input":"Marin Mersènne, 1588-1648","pos":1,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"3d90ae","input":"# Números de Mersènne","pos":0,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"5f493b","input":"Notação: $M_n = 2^n-1$.","pos":4,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"7a7de4","input":"https://en.wikipedia.org/wiki/Lucas%E2%80%93Lehmer_primality_test","pos":30,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"83fefb","input":"https://en.wikipedia.org/wiki/Great_Internet_Mersenne_Prime_Search\n\nhttps://www.mersenne.org/","pos":27,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"858831","input":"*Citação:*\n\n51st Known Mersenne Prime Found!\n\nDecember 21, 2018 — The Great Internet Mersenne Prime Search (GIMPS) has discovered the largest known prime number, $2^{82,589,933}-1$, having 24,862,048 digits. A computer volunteered by Patrick Laroche from Ocala, Florida made the find on December 7, 2018. The new prime number, also known as M82589933, is calculated by multiplying together 82,589,933 twos and then subtracting one. It is more than one and a half million digits larger than the previous record prime number.","pos":28,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"885651","input":"Um natural $n$ diz-se:\n* deficiente se $ s(n) <n $\n* abundante se $s(n)>n$\n* perfeito se $s(n)=n$\n* intocável se não existir $m$ tal que $s(m)=n$.","pos":20,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"94ab36","input":"Sejam $p$ um número primo e $M_p = 2^p -1$.\n\nDefina-se\n* $r_1 = 4$\n* $r_k \\equiv r_{k-1}^2-2 \\mod M_p$\n\n$M_p$ é primo se e só se $r_{p-1} \\equiv 0 \\mod M_p$.","pos":31,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"9a565e","input":"Se $M_p$ é primo então chama-se *primo de Mersènne*.","pos":11,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"a0f95a","input":"## À procura de primos *grandes*","pos":26,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"a7f177","input":"### Teste de primalidade de Lucas-Lehmer para números de Mersènne","pos":29,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"d1653a","input":"$n$ primo *não implica* que $M_n$ seja primo.","pos":10,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"d287c1","input":"Função alíquota\n\n$s(n)=\\displaystyle\\sum_{d|n, d\\ne n} d$.","pos":12,"state":"done","type":"cell"}
+{"cell_type":"markdown","id":"ecfb8b","input":"Teorema: Se $2^n-1$ é primo então $n$ é primo.\n\nDemonstração: exercício.","pos":2,"state":"done","type":"cell"}
+{"id":0,"time":1587493065552,"type":"user"}
+{"last_load":1587493065656,"type":"file"}

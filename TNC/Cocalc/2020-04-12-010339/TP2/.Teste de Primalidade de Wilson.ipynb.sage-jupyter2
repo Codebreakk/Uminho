@@ -1,0 +1,9 @@
+{"backend_state":"running","kernel":"sage-9.0","kernel_state":"idle","kernel_usage":{"cpu":0,"memory":231227392},"metadata":{"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.7.3"}},"trust":true,"type":"settings"}
+{"cell_type":"code","exec_count":0,"id":"32f411","input":"","pos":5,"type":"cell"}
+{"cell_type":"code","exec_count":11,"id":"46a3d3","input":"def teste_Wilson(n):\n    Zn = IntegerModRing(n)\n    factorial = Zn(1)\n    for i in range(2,n):\n        factorial = factorial * i\n    return factorial == Zn(-1)\n    ","pos":2,"type":"cell"}
+{"cell_type":"code","exec_count":12,"id":"193911","input":"teste_Wilson(81)","output":{"0":{"data":{"text/plain":"False"},"exec_count":12,"output_type":"execute_result"}},"pos":3,"type":"cell"}
+{"cell_type":"code","exec_count":13,"id":"b644bd","input":"teste_Wilson(97)","output":{"0":{"data":{"text/plain":"True"},"exec_count":13,"output_type":"execute_result"}},"pos":4,"type":"cell"}
+{"cell_type":"code","exec_count":5,"id":"74bcc4","input":"n = 71\nZn = IntegerModRing(n)","pos":0,"type":"cell"}
+{"cell_type":"code","exec_count":6,"id":"61f588","input":"factorial = Zn(1)\nfor i in range(2,n):\n    factorial = factorial * i\nfactorial","output":{"0":{"data":{"text/plain":"70"},"exec_count":6,"output_type":"execute_result"}},"pos":1,"type":"cell"}
+{"id":0,"time":1586292111469,"type":"user"}
+{"last_load":1586295928658,"type":"file"}
