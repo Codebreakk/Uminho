@@ -131,24 +131,152 @@ int ex3(){
 
 // TODO
 int ex4(){
-  pipe_fd[2];
-  pipe(pipe_fd);
+  int pipe_fd[2];
 
-  int pid = -1;
-  if((pid = fork()) == 0){
-    int pid2 = -1;
+  // Criar pipe.
+  if(pipe(pipe_fd) < 0){
+    perror("pipe");
+    _exit(1);
+  }
 
-    if((pid2 = fork()) == 0){
+  if(fork() == 0){
+    // 0 -> stdin
+    // 1 -> stdout
+    // pipe_fd[0] -> leitura pipe
+    // pipe_fd[1] -> leitura pipe
+    close(pipe_fd[0]);
 
-    }
+
+    // TODO: Verificar se close, dup2 e execlp correram com sucesso
+    dup2(pipe_fd[1],1);
+    close(pipe_fd[1]);
+
+    execlp("ls", "ls", "/etc", NULL);
+
+    _exit(1);
   }else{
     // processo pai.
+    if(fork() == 0){
+      close(pipe_fd[1]);
+
+      // TODO: Verificar se close, dup2 e execlp correram com sucesso
+      dup2(pipe_fd[0], 0);
+      close(pipe_fd[0]);
+
+      execlp("wc", "wc", "-l", NULL);
+
+      _exit(1);
+    }else{
+      close(pipe_fd[0]);
+      close(pipe_fd[1]);
+      wait(NULL);
+      wait(NULL);
+    }
   }
 
   _exit(0);
 }
 
 // TODO
+/** Exercício 5:
+*      Escreva um programa que emule o funcionamento do interpretador de coman-
+*      dos na execução encadeada de:
+*            grep -v ^# /etc/passwd | cut -f7 d: | uniq | wc -l
+*/
 int ex5(){
+  int commands = 4; // número de comandos executados.
+  int pipe_array[3][2]; // N = 3
+
+  // Criar pipe.
+  if(pipe(pipe_array[0]) < 0){
+    perror("pipe_array[0]");
+    _exit(1);
+  }
+
+  // Criar processo "grep".
+  if(fork() == 0){
+    // pipe_array[0][0]
+    // pipe_array[0][1]
+    close(pipe_array[0][0]);
+
+    dup2(pipe_array[0][1], 1);
+    close(pipe_array[0][1]);
+
+    // 1 -> pipe_array[0][1]
+    execlp("grep", "grep", "-v", "^#", "/etc/passwd", NULL);
+    _exit(1);
+  }
+
+  close(pipe_array[0][1]);
+
+  // Criar pipe.
+  if(pipe(pipe_array[1]) < 0){
+    perror("pipe_array[1]");
+    _exit(1);
+  }
+
+  // Criar processo "cut".
+  if(fork() == 0){
+    // pipe_array[0][0]
+    // pipe_array[1][0]
+    // pipe_array[1][1]
+    close(pipe_array[1][0]);
+
+    dup2(pipe_array[0][0], 0);
+    close(pipe_array[0][0]);
+
+    dup2(pipe_array[1][1], 1);
+    close(pipe_array[1][1]);
+
+    execlp("cut", "cut", "-f7", "-d:", NULL);
+
+    _exit(1);
+  }
+
+  close(pipe_array[0][0]);
+  close(pipe_array[1][1]);
+
+  // Criar pipe_array[2]
+  if(pipe(pipe_array[2]) < 0){
+    perror("pipe_array[2]");
+    _exit(1);
+  }
+
+  if(fork() == 0){
+    // pipe_array[1][0]
+    // pipe_array[2][0]
+    // pipe_array[2][1]
+    close(pipe_array[2][0]);
+
+    dup2(pipe_array[1][0], 0);
+    close(pipe_array[1][0]);
+
+    dup2(pipe_array[2][1], 1);
+    close(pipe_array[2][1]);
+
+    execlp("uniq", "uniq", NULL);
+
+    _exit(1);
+  }
+
+  close(pipe_array[1][0]);
+  close(pipe_array[2][1]);
+
+  if(fork() == 0){
+    // pipe_array[2][0]
+    dup2(pipe_array[2][0], 0);
+    close(pipe_array[2][0]);
+
+    execlp("wc", "wc", "-l", NULL);
+
+    _exit(1);
+  }
+
+  close(pipe_array[2][0]);
+
+  for (int i = 0; i < commands; i++) {
+    wait(NULL);
+  }
+
   _exit(0);
 }
