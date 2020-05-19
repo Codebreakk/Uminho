@@ -1,10 +1,12 @@
 import java.io.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Usuario{
   private String password;
   private int casos;
   private BufferedWriter bufferedwriter;
   private Boolean logged_in;
+  private ReentrantLock lock;
 
 
   public Usuario(BufferedWriter bufferedwriter, String password){
@@ -12,6 +14,7 @@ public class Usuario{
     this.casos = 0;
     this.bufferedwriter = bufferedwriter;
     this.logged_in = true;
+    this.lock = new ReentrantLock();
   }
 
   public BufferedWriter get_bufferedwriter(){

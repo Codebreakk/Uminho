@@ -21,10 +21,10 @@ public class Worker implements Runnable{
     System.out.println("\n> Worker successfully created!\n");
   }
 
-  private void write_message(BufferedWriter out, String message) throws IOException{
-    out.write(message);
-    out.newLine();
-    out.flush();
+  private void write_message(String message) throws IOException{
+    this.out.write(message);
+    this.out.newLine();
+    this.out.flush();
   }
 
   /** Step 1 - Login and Signup
@@ -40,53 +40,53 @@ public class Worker implements Runnable{
     // preso neste ciclo até que complete o registo.
     while(!step_completed){
       go_back = false; // flag reset no início de cada ciclo.
-      write_message(out, "> Please enter your username:");
+      write_message("> Please enter your username:");
       username = this.in.readLine();
       if(username.trim().equals("") || username.trim().equals(null)){
-        write_message(this.out, "> Invalid username, please try again.");
+        write_message("> Invalid username, please try again.");
       }else{
-        Boolean user_exists = registos.user_exists(username);
-        Boolean user_is_logged = registos.check_if_user_is_logged_in(username);
+        Boolean user_exists = this.registos.user_exists(username);
+        Boolean user_is_logged = this.registos.check_if_user_is_logged_in(username);
         if(user_is_logged){ // USUÁRIO JÁ ESTÁ LOGGADO
-          write_message(this.out, "> User already logged in. Please try again.");
+          write_message("> User already logged in. Please try again.");
           System.out.println("> User " + username + " is already logged in.\n");
         }else if(user_exists){ // LOGIN
-          write_message(this.out, "> Username already registered, insert password or leave empty to go back:");
+          write_message("> Username already registered, insert password or leave empty to go back:");
           tries = 0;
           while(!step_completed && !go_back && tries < 3){
             String password = this.in.readLine();
             if(password.trim().equals("") || password.trim().equals(null)){
-              write_message(this.out, "> Returning to login screen...");
+              write_message("> Returning to login screen...");
               go_back = true;
             }else{
-              step_completed = registos.login_user(username, password);
+              step_completed = this.registos.login_user(username, password);
               tries++;
               if(!step_completed && tries < 3){
-                write_message(this.out, "> Login failed, please try again.");
+                write_message("> Login failed, please try again.");
               }else if(!step_completed && tries >= 3){
-                write_message(this.out, "> Login failed after 3 tries.");
+                write_message("> Login failed after 3 tries.");
               }else if(step_completed){
-                registos.set_user_to_logged_in(username);
+                this.registos.set_user_to_logged_in(username);
                 message_on_success = "\n> You are now logged in!\n> Welcome back " + username + ".\n";
               }
             }
           }
         }else if(user_exists == false){ // NOVO REGISTO
-          write_message(this.out, "> Username not found, insert password to register or leave empty to go back:");
+          write_message("> Username not found, insert password to register or leave empty to go back:");
           tries = 0;
           while(!step_completed && tries < 3){
-            write_message(this.out, "> Insert password:");
+            write_message("> Insert password:");
             String password = this.in.readLine();
             if(password.trim().equals("") || password.trim().equals(null)){
-              write_message(this.out, "> Returning to login screen...");
+              write_message("> Returning to login screen...");
               go_back = true;
             }else{
-              step_completed = registos.register_new_user(username, password, this.out);
+              step_completed = this.registos.register_new_user(username, password, this.out);
               tries++;
               if(!step_completed && tries < 3){
-                write_message(this.out, "> Invalid password.");
+                write_message("> Invalid password.");
               }else if(!step_completed && tries >= 3){
-                write_message(this.out, "> Signup failed after 3 tries.");
+                write_message("> Signup failed after 3 tries.");
               }else if(step_completed){
                 message_on_success = "> You have completed the signup!\n> Welcome " + username + ".\n";
               }
@@ -95,8 +95,47 @@ public class Worker implements Runnable{
         }
       }
     }
-    write_message(this.out, message_on_success);
+    write_message(message_on_success);
     return username;
+  }
+
+  private void get_n_infected_and_update_users(String username) throws IOException{
+    String line = null;
+
+    while((line = this.in.readLine()) != null && !line.equals("quit")){
+      try{
+        Boolean success = false;
+        int n_infected = -1;
+        try{ // este try é para evitar situações em que recebemos Strings q não são números.
+          n_infected = Integer.parseInt(line);
+        }catch(NumberFormatException e){
+          //TODO: melhorar o tratamento de excepções.
+          write_message("> The number is in the wrong format, please try again:");
+          System.out.println("> NumberFormatException when trying to parse the String " + line + " to an Integer.\n");
+          e.printStackTrace();
+          continue; // salta o resto do loop de forma a recomeçar.
+        }
+        if(n_infected > 150){
+          write_message("> The number of infected people you know cannot be greater than 150. Try again:");
+          continue;
+        }
+        // TODO: "set_casos" e "write_estimate_to_all_users" têm de ser executados
+        //num só lock.
+        success = this.registos.set_casos_and_update_all_users(username, n_infected);
+        if(success){
+          write_message("> You can now update the number of infected people you know or quit by typing \"quit\":");
+          System.out.println("> Step 2 successfully completed for user: " + username + "\n");
+        }else{
+          write_message("> Failed to register the number of infected, please try again:");
+          System.out.println("> Step 2 failed for user: " + username + "\n");
+        }
+      }catch(IOException e){
+        //TODO: melhorar o tratamento de excepções.
+        write_message("> Failed to register the number of infected, please try again:");
+        System.out.println("> IOException when trying to register the number of infected people the user knows: \n");
+        e.printStackTrace();
+      }
+    }
   }
 
   @Override
@@ -125,30 +164,9 @@ public class Worker implements Runnable{
     quantos casos de doença este conhece nos seus contactos (valor inteiro >= 0)
     */
     try{
-      write_message(this.out, "> Please insert the number of infected people you know:");
-      String line = null;
-      while((line = this.in.readLine()) != null && !line.equals("quit")){
-        Boolean success = false;
-        int n_infected = -1;
-        try{ // este try é para evitar situações em que recebemos Strings q não são números.
-          n_infected = Integer.parseInt(line);
-        }catch(NumberFormatException e){
-          //TODO: melhorar o tratamento de excepções.
-          write_message(this.out, "> The number is in the wrong format, please try again:");
-          System.out.println("> NumberFormatException when trying to parse the String " + line + " to an Integer.\n");
-          e.printStackTrace();
-          continue; // salta o resto do loop de forma a recomeçar.
-        }
-        success = registos.set_casos(username, n_infected);
-        if(success){
-          write_message(this.out, "> The number of infected has been successfully registered. Thank you!");
-          // agora precisamos de calcular a proporção média e enviar para todos os clientes.
-          registos.write_estimate_to_all_users();
-        }else{
-          write_message(this.out, "> Failed to register the number of infected, please try again:");
-        }
-      }
-    }catch(IOException e){
+      write_message("> Please insert the number of infected people you know:");
+      get_n_infected_and_update_users(username);
+    }catch(IOException e){ // apanha a excepção do "write_message" acima e do "readLine" no método acima.
       //TODO: melhorar o tratamento de excepções.
       System.out.println("> IOException when trying to register the number of infected people the user knows: \n");
       e.printStackTrace();
@@ -158,10 +176,10 @@ public class Worker implements Runnable{
     // fechar socket e respectivos canais.
     try{
       System.out.println("> Client disconnected. Connection is closed.\n");
-      registos.set_user_to_logged_out(username);
-      socket.shutdownOutput();
-      socket.shutdownInput();
-      socket.close();
+      this.registos.set_user_to_logged_out(username);
+      this.socket.shutdownOutput();
+      this.socket.shutdownInput();
+      this.socket.close();
     }catch(IOException e){
       //TODO: melhorar o tratamento de excepções.
       System.out.println("> IOException when trying to close the socket:\n");
