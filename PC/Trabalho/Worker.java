@@ -17,6 +17,9 @@ public class Worker implements Runnable{
       this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }catch(IOException e){
       e.printStackTrace();
+      String e_cause = e.getCause().toString();
+      String e_message = e.getMessage();
+      System.out.println("> IOException when trying to initialize the worker.\n> Cause: " + e_cause + ".\n> Message: " + e_message + ".\n");
     }
     System.out.println("\n> Worker successfully created!\n");
   }
@@ -109,31 +112,31 @@ public class Worker implements Runnable{
         try{ // este try é para evitar situações em que recebemos Strings q não são números.
           n_infected = Integer.parseInt(line);
         }catch(NumberFormatException e){
-          //TODO: melhorar o tratamento de excepções.
           write_message("> The number is in the wrong format, please try again:");
-          System.out.println("> NumberFormatException when trying to parse the String " + line + " to an Integer.\n");
           e.printStackTrace();
+          String e_cause = e.getCause().toString();
+          String e_message = e.getMessage();
+          System.out.println("> NumberFormatException when trying to parse the String " + line + " to an Integer.\n> Cause: " + e_cause + ".\n> Message: " + e_message + ".\n");
           continue; // salta o resto do loop de forma a recomeçar.
         }
         if(n_infected > 150){
           write_message("> The number of infected people you know cannot be greater than 150. Try again:");
           continue;
         }
-        // TODO: "set_casos" e "write_estimate_to_all_users" têm de ser executados
-        //num só lock.
         success = this.registos.set_casos_and_update_all_users(username, n_infected);
         if(success){
           write_message("> You can now update the number of infected people you know or quit by typing \"quit\":");
-          System.out.println("> Step 2 successfully completed for user: " + username + "\n");
+          System.out.println("> Step 2 successfully completed for user \"" + username + "\"\n");
         }else{
           write_message("> Failed to register the number of infected, please try again:");
-          System.out.println("> Step 2 failed for user: " + username + "\n");
+          System.out.println("> Step 2 failed for user \"" + username + "\"\n");
         }
       }catch(IOException e){
-        //TODO: melhorar o tratamento de excepções.
         write_message("> Failed to register the number of infected, please try again:");
-        System.out.println("> IOException when trying to register the number of infected people the user knows: \n");
         e.printStackTrace();
+        String e_cause = e.getCause().toString();
+        String e_message = e.getMessage();
+        System.out.println("> IOException when trying to register the number of infected people the user knows: \n> Cause: " + e_cause + ".\n> Message: " + e_message + ".\n");
       }
     }
   }
@@ -148,16 +151,17 @@ public class Worker implements Runnable{
     try{
       username = login_and_signup();
     }catch(IOException e){
-      //TODO: melhorar o tratamento de excepções.
-      System.out.println("> IOException when trying to login/signup:\n");
       e.printStackTrace();
+      String e_cause = e.getCause().toString();
+      String e_message = e.getMessage();
+      System.out.println("> IOException when trying to login/signup:\n> Cause: " + e_cause + ".\n> Message: " + e_message + ".\n");
     }
 
     /** End of Step 1. */
     if(username != null){
-      System.out.println("> Step 1 completed for user: " + username + ".\n");
+      System.out.println("> Step 1 completed for user \"" + username + "\".\n");
     }else{
-      System.out.println("> Step 1 failed for user: " + username + ".\n");
+      System.out.println("> Step 1 failed for user \"" + username + "\".\n");
     }
 
     /** Start of Step 2 - De seguida, o servidor aguarda que o cliente indique
@@ -167,23 +171,25 @@ public class Worker implements Runnable{
       write_message("> Please insert the number of infected people you know:");
       get_n_infected_and_update_users(username);
     }catch(IOException e){ // apanha a excepção do "write_message" acima e do "readLine" no método acima.
-      //TODO: melhorar o tratamento de excepções.
-      System.out.println("> IOException when trying to register the number of infected people the user knows: \n");
       e.printStackTrace();
+      String e_cause = e.getCause().toString();
+      String e_message = e.getMessage();
+      System.out.println("> IOException when trying to register the number of infected people the user knows: \n> Cause: " + e_cause + ".\n> Message: " + e_message + ".\n");
     }
 
     /** FINAL STEP - client disconnects */
     // fechar socket e respectivos canais.
     try{
-      System.out.println("> Client disconnected. Connection is closed.\n");
+      System.out.println("> Client \"" + username + "\" has disconnected. Connection is closed.\n");
       this.registos.set_user_to_logged_out(username);
       this.socket.shutdownOutput();
       this.socket.shutdownInput();
       this.socket.close();
     }catch(IOException e){
-      //TODO: melhorar o tratamento de excepções.
-      System.out.println("> IOException when trying to close the socket:\n");
       e.printStackTrace();
+      String e_cause = e.getCause().toString();
+      String e_message = e.getMessage();
+      System.out.println("> IOException when trying to close the socket:\n> Cause: " + e_cause + ".\n> Message: " + e_message + ".\n");
     }
   }
 }

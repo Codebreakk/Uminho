@@ -12,6 +12,9 @@ public class Writer implements Runnable{
   @Override
   public void run(){
     this.rwlock.writelock();
+    rwlock.increment_total();
+    rwlock.decrement_total();
+    System.out.println("W  id: " + id + "\n");
     try{
       Thread.sleep(1000);
     }catch(InterruptedException e){

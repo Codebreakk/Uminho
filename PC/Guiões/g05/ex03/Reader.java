@@ -5,6 +5,7 @@ public class Reader implements Runnable{
   private int id;
 
   public Reader(int id){
+    this.rwlock = new RWLock();
     this.id = id;
   }
 

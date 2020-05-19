@@ -39,8 +39,8 @@ public class Registos{
 
     try{
       writers_waiting++;
-      // Enquanto existir 1 writer ou reader/writer activo ou readers activos:
-      while(writer != 0 || readers > 0 || reader_writers_waiting != 0){
+      // Enquanto existir 1 writer, reader ou reader/writer activo ou reader/writers à espera:
+      while(writer != 0 || readers > 0 || reader_writers_waiting != 0 || reader_writer != 0){
         System.out.println("> Acquiring Write Lock...\n");
         writer_wait.await();
         System.out.println("> Write Lock Acquired.\n");
@@ -97,6 +97,8 @@ public class Registos{
   private void readwritelock(){
     this.lock.lock();
     try{
+      // TODO: testar! Este lock permite o acesso de escrita se 2 pedidos forem
+      // feitos ao mesmo tempo?
       reader_writers_waiting++;
       while(writer != 0 || readers > 0 || writers_waiting != 0){
         System.out.println("> Acquiring Read/Write Lock...\n");
@@ -150,13 +152,13 @@ public class Registos{
   public Boolean set_user_to_logged_in(String username){
     Boolean result = false;
 
-    this.lock.lock();
+    this.readwriteunlock();
     try{
       Usuario usuario = user_list.get(username);
       usuario.set_logged_in(true);
       result = usuario.get_logged_in();
     }finally{
-      this.lock.unlock();
+      this.readwriteunlock();
       return result;
     }
   }
@@ -165,13 +167,13 @@ public class Registos{
   public Boolean set_user_to_logged_out(String username){
     Boolean result = false;
 
-    this.lock.lock();
+    this.readwritelock();
     try{
       Usuario usuario = user_list.get(username);
       usuario.set_logged_in(false);
       result = !usuario.get_logged_in();
     }finally{
-      this.lock.unlock();
+      this.readwriteunlock();
       return result;
     }
   }
@@ -212,11 +214,11 @@ public class Registos{
   public Boolean register_new_user(String username, String password, BufferedWriter bufferedwriter){
     Boolean result = false;
 
-    this.lock.lock();
+    this.readwritelock();
     try{
       result = add_user(username, password, bufferedwriter);
     }finally{
-      this.lock.unlock();
+      this.readwriteunlock();
       return result;
     }
   }
