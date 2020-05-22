@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -g
 
-all: clean my_printf
+all: my_printf
 
 my_printf: my_printf.o
 

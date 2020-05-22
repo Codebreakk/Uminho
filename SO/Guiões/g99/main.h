@@ -11,7 +11,7 @@
 
 int ex1();
 
-int ex2(int argc, char * argv[]);
+//int ex2(int argc, char * argv[]);
 
 //int ex3();
 
