@@ -11,3 +11,5 @@ int my_printf(char* string);
 int my_printf2(char* string,...);
 
 char * integer_to_string(int integer);
+
+int tokenize(int ARRAY_SIZE, char* buf, char * args[]);

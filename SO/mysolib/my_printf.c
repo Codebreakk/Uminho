@@ -1,5 +1,8 @@
 #include "my_printf.h"
 
+// TODO: talvez seja melhor renomear este ficheiro para "mysolib" visto que já
+// existem algumas funções que são usadas para outros propósitos que não imprimir.
+
 /** my_printf(char* string):
 *   Versão própria da função printf que recebe uma string e escreve para o stan-
 *   dard output.
@@ -103,4 +106,17 @@ char * integer_to_string(int integer){
   }
 
   return (string);
+}
+
+// TODO: testar, ainda não foi usada. Isto é apenas um pequeno copy/paste para
+// registar os passos principais.
+int tokenize(int ARRAY_SIZE, char* buf, char * args[]){
+  int n = 0;
+
+  args[n] = strtok(buf, " ");
+  while(args[n] && n < ARRAY_SIZE - 1){
+    args[++n] = strtok(NULL, " ");
+  }
+
+  return 0;
 }
