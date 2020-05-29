@@ -19,7 +19,7 @@ int close_fifo_client_server(){
 int open_fifo_server_client(){
   // Abrir fifo de leitura do servidor
   if((fifo_fd[1] = open(FIFO_SERVER_CLIENT, O_RDONLY)) < 0){
-    perror("fifo client server open");
+    perror("fifo server client open");
     exit(1);
   }
 
@@ -32,7 +32,7 @@ int close_fifo_server_client(){
   return 0;
 }
 
-// Substitui as flags do comando "./argus" pelo nome do comando.
+// Substitui as flags do comando "./argus" pelo nome do comando
 void replace_flags_with_names(char * argv[]){
   if(strcmp(argv[1], FLAG_TEMPO_INACTIVIDADE) == 0){
     strcpy(argv[1], TEMPO_INACTIVIDADE);
@@ -51,12 +51,13 @@ void replace_flags_with_names(char * argv[]){
   }
 }
 
+// Recebe os comandos já tratados pela main e, se o comando for válido, envia
+// para o servidor
 int run_argus(int argc, char * argv[]){
 
   if(strcmp(argv[0], TEMPO_INACTIVIDADE) == 0 && argc == 2){
     // tempo-inactividade: ./argus -i n
     // Pedir ao servidor para executar "tempo_inactividade(n)"
-    //my_printf(argv[0]);
   }else if(strcmp(argv[0], TEMPO_EXECUCAO) == 0 && argc == 2){
     // tempo-execução:     ./argus -m n
     // Pedir ao servidor para executar "tempo_execucao(n)"
@@ -74,17 +75,24 @@ int run_argus(int argc, char * argv[]){
     // Pedir ao servidor para executar "historico()"
   }else if(strcmp(argv[0], AJUDA) == 0 && argc == 1) {
     // ajuda:              ./argus -h
-    // Pedir ao servidor para executar "ajuda()"
+    // abrir fifo de escrita do cliente para o servidor
     open_fifo_client_server();
+    // escrever comando para o servidor
     write(fifo_fd[0], argv[0], strlen(argv[0]));
+    // fechar fifo de escrita do cliente para o servidor
     close_fifo_client_server();
+
 
     char buf[BUF_SIZE];
     ssize_t bytes_read = 0;
+    // abrir fifo de leitura do servidor para o cliente
     open_fifo_server_client();
+    // ler os dados escritos para o fifo e escrever para o buf
     while((bytes_read = read(fifo_fd[1], buf, BUF_SIZE)) != 0){
+      // escrever do buf para o STDOUT
       write(1, buf, bytes_read);
     }
+    // fechar fifo de leitura do servidor para o cliente
     close_fifo_server_client();
   }
 

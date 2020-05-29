@@ -18,7 +18,7 @@
 #define HISTORICO "historico"
 #define AJUDA "ajuda"
 
-/**  */
+/** Variável global com o tamanho dos buffers */
 #define BUF_SIZE 1024
 
 /** nomes dos FIFOS usados pelo cliente e servidor para comunicarem. O nome dos
@@ -30,13 +30,18 @@
 #define FIFO_CLIENT_SERVER "fifo_client_server"
 #define FIFO_SERVER_CLIENT "fifo_server_client"
 
-/** Nome do ficheiro lido pela função ajuda */
+/** Nomes dos ficheiros usados pela função ajuda e funcionalidades de logging */
 #define HELP "HELP"
+#define LOG "log"
+#define LOG_IDX "log.idx"
 
 /** Os fifos foram colocados neste ficheiro de forma a não termos de passar
 * repetidamente como argumento da main para cada uma das funções.
 */
 int fifo_fd[2];
+
+/** File Descriptor para o ficheiro de log */
+int log_fd;
 
 /** Lista de funções para manipulação dos fifos */
 int open_fifo_server_client();

@@ -5,7 +5,7 @@ int main(int argc, char * argv[]){
   char buf[BUF_SIZE];
   ssize_t total = 0;
 
-  // recebeu apenas o comando "./argus" sem argumentos
+  // recebemos apenas o comando "./argus" (sem argumentos)
     if(argc == 1 && strcmp(argv[0], "./argus") == 0){
       my_printf("\nargus$ ");
       // TODO: criar o nosso read para evitar problemas com o tamanho dos argumentos
@@ -19,13 +19,19 @@ int main(int argc, char * argv[]){
         while(args[length_args] != NULL){
           length_args++;
         }
-
+        // Passar a lista dos argumentos para a função auxiliar que comunica com
+        // o servidor
         run_argus(length_args, args);
         my_printf("\nargus$ ");
       }
     }else{
+      // recebemos um comando com argumentos (ex.: ./argus -h)
+
+      // traduzir as flags para comandos
       replace_flags_with_names(argv);
 
+      // Passar os argumentos do comando para a função auxiliar que comunica com
+      // o servidor
       run_argus(argc - 1, argv + 1);
     }
 
