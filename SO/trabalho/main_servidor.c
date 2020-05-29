@@ -1,14 +1,5 @@
 #include "servidor.h"
 
-int open_fifo_server_client(){
-  if((fifo_fd[1] = open(FIFO_SERVER_CLIENT, 0666)) < 0){
-    perror("fifo server client open");
-    // não faz sentido terminar o servidor quando falha a abertura dos pipes.
-    //exit(1);
-  }
-  my_printf("fifo server client is now open.\n");
-}
-
 int main(int argc, char * argv[]){
 
   my_printf("Starting Server...\n");
@@ -17,7 +8,7 @@ int main(int argc, char * argv[]){
   if(access(FIFO_CLIENT_SERVER, F_OK) == -1){
     if(mkfifo(FIFO_CLIENT_SERVER, 0666) < 0){
       perror("mkfifo client server");
-      exit(1);
+      //exit(1);
     }
     my_printf("fifo client server has been created.\n");
   }
@@ -25,26 +16,32 @@ int main(int argc, char * argv[]){
   if(access(FIFO_SERVER_CLIENT, F_OK) == -1){
     if(mkfifo(FIFO_SERVER_CLIENT, 0666) < 0){
       perror("mkfifo server client");
-      exit(1);
+      //exit(1);
     }
     my_printf("fifo server client has been created.\n");
   }
 
   // enquanto receber dados no fifo_client_server
-  while((fifo_fd[0] = open(FIFO_CLIENT_SERVER, 0666)) > 0){
-    my_printf("fifo client server is now open.\n");
+  while((fifo_fd[0] = open_fifo_client_server()) > 0){
 
-    char buf[100];
+    char buf[BUF_SIZE];
     int bytes_read;
-    while((bytes_read = read(fifo_fd[0], buf, 100)) > 0){
-      // abrir fifo para escrever do servidor para o cliente
-      open_fifo_server_client();
-      ajuda();
-      close(fifo_fd[1]);
+    while((bytes_read = read(fifo_fd[0], buf, BUF_SIZE)) > 0){
+      // não podemos ler o buf por completo, apenas até à posição "bytes_read"
+      if(strncmp(buf, "ajuda", bytes_read) == 0){
+        // abrir fifo para escrever do servidor para o cliente
+        open_fifo_server_client();
+        // executar comando
+        ajuda();
+        my_printf("Finished ajuda.\n");
+        // fechar fifo
+        close_fifo_server_client();
+      }
     }
 
-    close(fifo_fd[0]);
+    close_fifo_client_server();
   }
 
+  my_printf("Closing server...");
   return 0;
 }

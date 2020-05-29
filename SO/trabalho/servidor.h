@@ -9,6 +9,18 @@
 #include <signal.h>
 #include "mySOlib.h"
 
+/** nome de cada funcionalidade por extenso */
+#define TEMPO_INACTIVIDADE "tempo-inactividade"
+#define TEMPO_EXECUCAO "tempo-execucao"
+#define EXECUTAR "executar"
+#define LISTAR "listar"
+#define TERMINAR "terminar"
+#define HISTORICO "historico"
+#define AJUDA "ajuda"
+
+/**  */
+#define BUF_SIZE 1024
+
 /** nomes dos FIFOS usados pelo cliente e servidor para comunicarem. O nome dos
 * fifos indica a direção na qual a informação é enviada. Por exemplo, o fifo
 * FIFO_CLIENT_SERVER é usado para escrita pelo cliente e leitura pelo servidor
@@ -19,12 +31,21 @@
 #define FIFO_SERVER_CLIENT "fifo_server_client"
 
 /** Nome do ficheiro lido pela função ajuda */
-#define HELP "help"
+#define HELP "HELP"
 
 /** Os fifos foram colocados neste ficheiro de forma a não termos de passar
 * repetidamente como argumento da main para cada uma das funções.
 */
 int fifo_fd[2];
+
+/** Lista de funções para manipulação dos fifos */
+int open_fifo_server_client();
+
+int close_fifo_server_client();
+
+int open_fifo_client_server();
+
+int close_fifo_client_server();
 
 /** Lista de funcionalidades implementadas de acordo com o enunciado. */
 int tempo_inactividade(int segundos);

@@ -1,5 +1,37 @@
 #include "cliente.h"
 
+int open_fifo_client_server(){
+  // Abrir fifo de escrita para o servidor
+  if((fifo_fd[0] = open(FIFO_CLIENT_SERVER, O_CREAT | O_TRUNC | O_WRONLY)) < 0){
+    perror("fifo client server open");
+    exit(1);
+  }
+
+  return fifo_fd[0];
+}
+
+int close_fifo_client_server(){
+  close(fifo_fd[0]);
+
+  return 0;
+}
+
+int open_fifo_server_client(){
+  // Abrir fifo de leitura do servidor
+  if((fifo_fd[1] = open(FIFO_SERVER_CLIENT, O_RDONLY)) < 0){
+    perror("fifo client server open");
+    exit(1);
+  }
+
+  return fifo_fd[1];
+}
+
+int close_fifo_server_client(){
+  close(fifo_fd[1]);
+
+  return 0;
+}
+
 // Substitui as flags do comando "./argus" pelo nome do comando.
 void replace_flags_with_names(char * argv[]){
   if(strcmp(argv[1], FLAG_TEMPO_INACTIVIDADE) == 0){
@@ -20,19 +52,6 @@ void replace_flags_with_names(char * argv[]){
 }
 
 int run_argus(int argc, char * argv[]){
-  int fifo_fd[2];
-
-  // Abrir fifo de escrita para o servidor
-  if((fifo_fd[0] = open(FIFO_CLIENT_SERVER, 0666)) < 0){
-    perror("fifo client to server open");
-    exit(1);
-  }
-
-  // Abrir fifo de leitura do servidor
-  if((fifo_fd[1] = open(FIFO_SERVER_CLIENT, 0666)) < 0){
-    perror("fifo server to client open");
-    exit(1);
-  }
 
   if(strcmp(argv[0], TEMPO_INACTIVIDADE) == 0 && argc == 2){
     // tempo-inactividade: ./argus -i n
@@ -56,14 +75,17 @@ int run_argus(int argc, char * argv[]){
   }else if(strcmp(argv[0], AJUDA) == 0 && argc == 1) {
     // ajuda:              ./argus -h
     // Pedir ao servidor para executar "ajuda()"
-    //my_printf("we're in\n");
+    open_fifo_client_server();
     write(fifo_fd[0], argv[0], strlen(argv[0]));
+    close_fifo_client_server();
 
-    char buf[100];
-    int bytes_read;
-    while((bytes_read = read(fifo_fd[1], buf, 100)) > 0){
+    char buf[BUF_SIZE];
+    ssize_t bytes_read = 0;
+    open_fifo_server_client();
+    while((bytes_read = read(fifo_fd[1], buf, BUF_SIZE)) != 0){
       write(1, buf, bytes_read);
     }
+    close_fifo_server_client();
   }
 
   return 0;

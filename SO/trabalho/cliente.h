@@ -9,6 +9,8 @@
 #include <signal.h>
 #include "mySOlib.h"
 
+#define BUF_SIZE 1024
+
 // nomes dos FIFOS usados pelo cliente e servidor para comunicarem.
 #define FIFO_CLIENT_SERVER "fifo_client_server"
 #define FIFO_SERVER_CLIENT "fifo_server_client"
@@ -30,6 +32,16 @@
 #define FLAG_TERMINAR "-t"
 #define FLAG_HISTORICO "-r"
 #define FLAG_AJUDA "-h"
+
+int fifo_fd[2];
+
+int open_fifo_client_server();
+
+int close_fifo_client_server();
+
+int open_fifo_server_client();
+
+int close_fifo_server_client();
 
 // substitui todas as flags pelos respectivos nomes de cada funcionalidade
 void replace_flags_with_names(char * argv[]);

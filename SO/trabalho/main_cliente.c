@@ -1,10 +1,9 @@
 #include "cliente.h"
 
 int main(int argc, char * argv[]){
-  int BUF_SIZE = 256;
   int ARRAY_SIZE = 256;
   char buf[BUF_SIZE];
-  int total = 0;
+  ssize_t total = 0;
 
   // recebeu apenas o comando "./argus" sem argumentos
     if(argc == 1 && strcmp(argv[0], "./argus") == 0){
@@ -20,8 +19,7 @@ int main(int argc, char * argv[]){
         while(args[length_args] != NULL){
           length_args++;
         }
-        
-        //my_printf(args[0]);
+
         run_argus(length_args, args);
         my_printf("\nargus$ ");
       }
