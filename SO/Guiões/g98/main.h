@@ -9,16 +9,12 @@
 #include <signal.h>
 #include "my_printf.h"
 
-int tempo_inactividade(int segundos);
+int ex1();
 
-int tempo_execucao(int segundos);
+//int ex2(int argc, char * argv[]);
 
-int executar(char* comandos);
+//int ex3();
 
-int listar();
+//int ex4();
 
-int terminar(int tarefa);
-
-int historico();
-
-int ajuda();
+//int ex5();

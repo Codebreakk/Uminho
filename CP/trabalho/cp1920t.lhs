@@ -968,32 +968,15 @@ outras funções auxiliares que sejam necessárias.
 
 \subsection*{Problema 1}
 \begin{code}
-discollect :: (Ord b, Ord a) => [(b, [a])] -> [(b, a)]
-discollect x = set [k |-> head d | (k,d) <- x ]
---discollect x = set [k |-> (head d) | (k,d) <- x ]
---discollect x = undefined
-
---           collect :: (Ord b, Ord a) => [(b, a)] -> [(b, [a])]
---           set [ k |-> set [ y | (z,y) <- x , z==k ] | (k,d) <- x ]
---           set [ k |-> set [ d' | (k',d') <- x , k'==k ] | (k,d) <- x ]
-
---  set [ k | -- dentro da lista externa, mantém o b no 1º elem.
---          |-> set [ y | (z,y) <- x , z==k ] -- no 2º elem., cria uma lista de 'a's para z == k
---          | (k,d) <- x ] -- (a,b) => (k,d)
-
---  set :: Ord a => [a] -> [a]
---  set = sort . nub
-
---  a |-> b = (a,b)
-
-
-
+discollect :: (Ord a, Ord b) => [(b, [a])] -> [(b, a)]
+discollect x = (lstr .! id) x
 
 dic_exp :: Dict -> [(String,[String])]
 dic_exp = collect . tar
 
 tar = cataExp g where
   g = undefined
+--g = either nil (lnks . p2)
 
 dic_rd = undefined
 

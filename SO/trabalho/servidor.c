@@ -1,4 +1,6 @@
-#include "main.h"
+#include "servidor.h"
+
+#define AJUDA_TEMPO_INACTIVIDADE "\nargus -i n: Define o tempo máximo 'n' (em segundos) de inactividade de comunicação num pipe anónimo.\n"
 
 /** Definir o tempo máximo (em segundos) de inactividade de comunicação num pipe
 * anónimo (opção ""-i n" da linha de comando).
@@ -36,5 +38,8 @@ int historico(){
 
 /** Apresentar ajuda à sua utilização (opção "-h"). */
 int ajuda(){
-  return 0;
+  my_printf("we're in.\n");
+  write(fifo_fd[1], AJUDA_TEMPO_INACTIVIDADE, strlen(AJUDA_TEMPO_INACTIVIDADE));
+
+   return 0;
 }

@@ -247,12 +247,13 @@ public class Registos{
       // actualiza o número de casos que este usuário conhece.
       Usuario usuario_actual = get_user(username);
       usuario_actual.set_casos(casos);
+      BufferedWriter out_usuario_actual = usuario_actual.get_bufferedwriter();
 
       // se a actualização correu com sucesso:
       if(casos == usuario_actual.get_casos()){
-        BufferedWriter out_usuario_actual = usuario_actual.get_bufferedwriter();
         if(out_usuario_actual != null){ // só para proteger de NullPointerException...
           write_message(out_usuario_actual, "> The number of infected has been successfully registered. Thank you!");
+          result = true;
         }
         // 1º - calculamos a nova estimativa da proporção média.
         int n_users = this.user_list.size();
@@ -277,6 +278,8 @@ public class Registos{
             result = true;
           }
         }
+      }else{
+        write_message(out_usuario_actual, "Failed to update the number of infected you know. Please try again.");
       }
     }catch(IOException e){
       //TODO: melhorar o tratamento de excepções.

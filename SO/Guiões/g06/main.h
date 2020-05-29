@@ -8,11 +8,11 @@
 #include <stdlib.h>
 #include "my_printf.h"
 
-//int ex1();
+int my_mkfifo(int argc, char * argv[]);
 
-//int ex2();
+int wfifo(int argc, char * argv[]);
 
-//int ex3();
+int rfifo(int argc, char * argv[]);
 
 //int ex4();
 

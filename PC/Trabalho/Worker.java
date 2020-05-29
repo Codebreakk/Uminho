@@ -30,6 +30,14 @@ public class Worker implements Runnable{
     this.out.flush();
   }
 
+  private Boolean is_number(String line){
+    try{ // este try é para evitar situações em que recebemos Strings q não são números.
+      int number = Integer.parseInt(line);
+      return true;
+    }catch(NumberFormatException e){
+      return false;
+    }
+  }
   /** Step 1 - Login and Signup
   */
   private String login_and_signup() throws IOException{
@@ -109,14 +117,10 @@ public class Worker implements Runnable{
       try{
         Boolean success = false;
         int n_infected = -1;
-        try{ // este try é para evitar situações em que recebemos Strings q não são números.
+        if(is_number(line)){ // este try é para evitar situações em que recebemos Strings q não são números.
           n_infected = Integer.parseInt(line);
-        }catch(NumberFormatException e){
+        }else{
           write_message("> The number is in the wrong format, please try again:");
-          e.printStackTrace();
-          String e_cause = e.getCause().toString();
-          String e_message = e.getMessage();
-          System.out.println("> NumberFormatException when trying to parse the String " + line + " to an Integer.\n> Cause: " + e_cause + ".\n> Message: " + e_message + ".\n");
           continue; // salta o resto do loop de forma a recomeçar.
         }
         if(n_infected > 150){

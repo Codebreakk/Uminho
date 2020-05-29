@@ -154,7 +154,7 @@ ssize_t myreadln4(int fd, char *line, size_t size){
     perror("File descriptor inválido.");
   }
 
-  while((n = readchar(fd, &line[i])) > 0 && i < size) {
+  while((n = readcharprof(fd, &line[i])) > 0 && i < size) {
     i++;
     if(line[i] == '\n') return i;
   }

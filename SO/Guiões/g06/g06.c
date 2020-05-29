@@ -18,25 +18,32 @@
 * um processo o abra para leitura, e vice-cersa.
 */
 
-int my_mkfifo(){
+int my_mkfifo(int argc, char * argv[]){
+  if(mkfifo(argv[1], 0666) < 0){
+    perror("mkfifo");
+    exit(1);
+  }
 
+  return 0;
 }
 
 int wfifo(int argc, char * argv[]){
 
   int fifo_fd;
-  if((fifo_fd = open(argv[1], O_WRONLY)) < 0){
-    perror("fifo open");
-    exit(1);
-  }
+    if((fifo_fd = open(argv[1], O_WRONLY)) < 0){
+      perror("fifo open");
+      exit(1);
+    }
 
-  printf("fifo is now open.\n");
+  my_printf("fifo is now open.\n");
 
   char buf[100];
   int bytes_read;
   while((bytes_read = read(0, buf, 100)) > 0){
-    write(fifo_fd, buf, 0);
+    write(fifo_fd, buf, bytes_read);
   }
+
+  close(fifo_fd);
 
   return 0;
 }
@@ -55,8 +62,10 @@ int rfifo(int argc, char * argv[]){
   char buf[100];
   int bytes_read;
   while((bytes_read = read(fifo_fd, buf, 100)) > 0){
-    write(1, buf, fifo_fd);
+    write(1, buf, bytes_read);
   }
+
+  close(fifo_fd);
 
   return 0;
 }
@@ -70,24 +79,25 @@ int rfifo(int argc, char * argv[]){
 int servidor(int argc, char * argv[]){
 
   int file_fd;
-
   if((file_fd = open("log.txt", O_CREAT | O_TRUNC | O_WRONLY)) < 0){
     perror("file open");
     exit(1);
   }
 
   int fifo_fd;
-  while((fifo_fd = open(argv[1], O_RDONLY)) < 0){
+
+  while((fifo_fd = open(argv[1], O_RDONLY)) > 0){
     printf("fifo is now open.\n");
 
     char buf[100];
     int bytes_read;
     while((bytes_read = read(fifo_fd, buf, 100)) > 0){
-      write(file_fd, buf, fifo_fd);
+      write(file_fd, buf, bytes_read);
     }
 
     close(fifo_fd);
   }
+
   close(file_fd);
 
   return 0;
