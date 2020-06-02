@@ -108,8 +108,7 @@ char * integer_to_string(int integer){
   return (string);
 }
 
-// TODO: testar, ainda não foi usada. Isto é apenas um pequeno copy/paste para
-// registar os passos principais.
+// TODO: testar. Já está em uso.
 int tokenize(int ARRAY_SIZE, char* buf, char * args[]){
   int n = 0;
 
@@ -118,9 +117,10 @@ int tokenize(int ARRAY_SIZE, char* buf, char * args[]){
     int len = strlen(args[0]);
     // remove o '\n' no final de algumas strings para evitar falhar comparações
     // com o "strcmp".
-    if ((args[n])[len - 1] == '\n') {
+    if((args[n])[len - 1] == '\n') {
       (args[n])[len -1] = '\0';
     }
+
     args[++n] = strtok(NULL, " \n");
   }
 
@@ -161,4 +161,13 @@ int my_readchar(int fd, char* buf){
   *buf = buf_aux[pos];
   pos++;
   return 1;
+}
+
+int sizeof_string_array(char* args[]){
+  int length_array = 0;
+  while(args[length_array] != NULL){
+    length_array++;
+  }
+
+  return length_array;
 }

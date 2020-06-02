@@ -193,7 +193,7 @@ int ex5(){
     _exit(1);
   }
 
-  // Criar processo "grep".
+  // 0 - Criar processo "grep".
   if(fork() == 0){
     // pipe_array[0][0]
     // pipe_array[0][1]
@@ -215,7 +215,7 @@ int ex5(){
     _exit(1);
   }
 
-  // Criar processo "cut".
+  // 1 - Criar processo "cut".
   if(fork() == 0){
     // pipe_array[0][0]
     // pipe_array[1][0]
@@ -242,10 +242,12 @@ int ex5(){
     _exit(1);
   }
 
+  // 2 - Criar processo uniq
   if(fork() == 0){
-    // pipe_array[1][0]
-    // pipe_array[2][0]
-    // pipe_array[2][1]
+    /** pipe_array[1][0]
+    *   pipe_array[2][0]
+    *   pipe_array[2][1]
+    */
     close(pipe_array[2][0]);
 
     dup2(pipe_array[1][0], 0);
@@ -255,23 +257,20 @@ int ex5(){
     close(pipe_array[2][1]);
 
     execlp("uniq", "uniq", NULL);
-
     _exit(1);
   }
-
   close(pipe_array[1][0]);
   close(pipe_array[2][1]);
 
+  // 3 - Criar processo wc -l
   if(fork() == 0){
     // pipe_array[2][0]
     dup2(pipe_array[2][0], 0);
     close(pipe_array[2][0]);
 
     execlp("wc", "wc", "-l", NULL);
-
     _exit(1);
   }
-
   close(pipe_array[2][0]);
 
   for (int i = 0; i < commands; i++) {

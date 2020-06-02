@@ -17,3 +17,5 @@ int tokenize(int ARRAY_SIZE, char* buf, char * args[]);
 ssize_t my_readln(int fd, char *line, size_t size);
 
 int my_readchar(int fd, char* buf);
+
+int sizeof_string_array(char* args[]);

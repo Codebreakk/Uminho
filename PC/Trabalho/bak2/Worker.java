@@ -89,7 +89,7 @@ public class Worker implements Runnable{
         }else if(user_exists == false){ // NOVO REGISTO
           write_message("> Username not found, insert password to register or leave empty to go back:");
           tries = 0;
-          while(!step_completed && tries < 3 && !go_back){
+          while(!step_completed && tries < 3){
             write_message("> Insert password:");
             String password = this.in.readLine();
             if(password.trim().equals("") || password.trim().equals(null)){

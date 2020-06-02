@@ -11,6 +11,7 @@
 
 /** Variável global com o tamanho dos buffers */
 #define BUF_SIZE 1024
+#define ARRAY_SIZE 256
 
 /** nomes dos FIFOS usados pelo cliente e servidor para comunicarem. */
 #define FIFO_CLIENT_SERVER "fifo_client_server"
@@ -33,6 +34,9 @@
 #define FLAG_TERMINAR "-t"
 #define FLAG_HISTORICO "-r"
 #define FLAG_AJUDA "-h"
+
+/**  */
+#define WHITESPACE " "
 
 /** fifos de leitura e escrita do servidor */
 int fifo_fd[2];

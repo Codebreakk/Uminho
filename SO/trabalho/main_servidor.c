@@ -33,15 +33,41 @@ int main(int argc, char * argv[]){
   while((fifo_fd[0] = open_fifo_client_server()) > 0){
 
     char buf[BUF_SIZE];
-    int bytes_read;
+    int bytes_read = 0;
+    char * args [ARRAY_SIZE];
     while((bytes_read = read(fifo_fd[0], buf, BUF_SIZE)) > 0){
+      // usado apenas pela função executar.
+      // char * buf_copy;
+      // memcpy(buf_copy, buf, bytes_read);
+      buf[bytes_read] = '\0';
+      //my_printf2("comando (before): %s\n", buf);
+
       // não podemos ler o buf por completo, apenas até à posição "bytes_read"
       if(strncmp(buf, TEMPO_INACTIVIDADE, bytes_read) == 0){
+        tokenize(ARRAY_SIZE, buf, args);
+        int segundos = atoi(args[1]);
+        // abrir fifo de escrita do servidor para o cliente
+        open_fifo_server_client();
+        tempo_inactividade(segundos);
+        my_printf2("Finished tempo-inactividade (%d seconds).\n", segundos);
+        close_fifo_server_client();
 
       }else if(strncmp(buf, TEMPO_EXECUCAO, bytes_read) == 0){
+        tokenize(ARRAY_SIZE, buf, args);
+        int segundos =  atoi(args[1]);
+        // abrir fifo de escrita do servidor para o cliente
+        open_fifo_server_client();
+        tempo_execucao(segundos);
+        my_printf2("Finished tempo-execucao (%d seconds).\n", segundos);
+        close_fifo_server_client();
 
-      }else if(strncmp(buf, EXECUTAR, bytes_read) == 0){
-
+      }else if(strncmp(buf, EXECUTAR, 8) == 0){
+        char * comando = malloc(bytes_read);
+        strncpy(comando, buf, strlen(buf)-9);
+        //my_printf2("comando (after): %s\n", buf);
+        open_fifo_server_client();
+        executar(buf + 9);
+        close_fifo_server_client();
       }else if(strncmp(buf, LISTAR, bytes_read) == 0){
 
       }else if(strncmp(buf, TERMINAR, bytes_read) == 0){

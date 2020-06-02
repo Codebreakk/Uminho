@@ -38,14 +38,38 @@ int open_fifo_client_server(){
 int close_fifo_client_server(){
   close(fifo_fd[0]);
   my_printf("fifo client server is now closed.\n");
-  
+
+  return 0;
+}
+
+int parse_comandos(int array_size, char* buf, char * args[]){
+  int n = 0;
+
+  args[n] = strtok(buf, "|");
+  while(args[n] && n < array_size - 1){
+    int len = strlen(args[0]);
+    // remove o '\n' no final de algumas strings para evitar falhar comparações
+    // com o "strcmp".
+    if ((args[n])[len - 1] == '\n') {
+      (args[n])[len -1] = '\0';
+    }
+    args[++n] = strtok(NULL, "|");
+  }
+
   return 0;
 }
 
 /** Definir o tempo máximo (em segundos) de inactividade de comunicação num pipe
-* anónimo (opção ""-i n" da linha de comando).
+* anónimo (opção "-i n" da linha de comando).
 */
 int tempo_inactividade(int segundos){
+  if(segundos < 0){
+    perror("tempo-inactividade");
+    return 1;
+  }
+
+  max_inactividade = segundos;
+
   return 0;
 }
 
@@ -53,11 +77,62 @@ int tempo_inactividade(int segundos){
 * comandos).
 */
 int tempo_execucao(int segundos){
+  if(segundos < 0){
+    perror("tempo-execucao");
+    return 1;
+  }
+
+  max_execucao = segundos;
+
   return 0;
 }
 
 /** Executar uma tarefa (opção «-e "p1|p2...|pn"» da linha de comando). */
 int executar(char* comandos){
+  char * coms[ARRAY_SIZE];
+  parse_comandos(ARRAY_SIZE, comandos, coms);
+
+  int sizeof_coms = sizeof_string_array(coms);
+  my_printf2("sizeof_coms %d\n", sizeof_coms);
+
+  int n_pipes = 1;
+
+  if(sizeof_coms > 1){
+    n_pipes = sizeof_coms - 1;
+  }
+
+  int pipe_array[n_pipes][2];
+
+  for(int i = 0; coms[i] != NULL; i++){
+    // Criar pipe anónimo
+    if(pipe(pipe_array[i]) < 0){
+      perror("pipe_array");
+      my_printf2("Failed to create pipe_array[%d]\n", i);
+      return 1;
+    }
+
+    if(fork() == 0){
+      if(i < n_pipes){
+        close(pipe_array[i][0]);
+      }
+
+      if(i > 0){
+        dup2(pipe_array[i-1][0], 0);
+        close(pipe_array[i-1][0]);
+      }
+
+      if(i < n_pipes){
+        dup2(pipe_array[i][1], 1);
+        close(pipe_array[i][1]);
+      }
+
+      if(i > 0) close(pipe_array[i-1][i-1]);
+      if(i < n_pipes) close(pipe_array[i][1]);
+    }
+
+    // my_printf2("%s \n", coms[i]);
+  }
+
   return 0;
 }
 
@@ -71,7 +146,7 @@ int terminar(int tarefa){
   return 0;
 }
 
-/** Listar registo histórico de tarefas terminadas (opção -r). */
+/** Listar registo histórico de tarefas terminadas (opção "-r"). */
 int historico(){
   return 0;
 }

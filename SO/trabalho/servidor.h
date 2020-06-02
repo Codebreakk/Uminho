@@ -20,6 +20,7 @@
 
 /** Variável global com o tamanho dos buffers */
 #define BUF_SIZE 1024
+#define ARRAY_SIZE 256
 
 /** nomes dos FIFOS usados pelo cliente e servidor para comunicarem. O nome dos
 * fifos indica a direção na qual a informação é enviada. Por exemplo, o fifo
@@ -43,6 +44,10 @@ int fifo_fd[2];
 /** File Descriptor para o ficheiro de log */
 int log_fd;
 
+/**  */
+static int max_inactividade = -1;
+static int max_execucao = -1;
+
 /** Lista de funções para manipulação dos fifos */
 int open_fifo_server_client();
 
@@ -51,6 +56,8 @@ int close_fifo_server_client();
 int open_fifo_client_server();
 
 int close_fifo_client_server();
+
+int parse_comandos(int array_size, char* buf, char * args[]);
 
 /** Lista de funcionalidades implementadas de acordo com o enunciado. */
 int tempo_inactividade(int segundos);

@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
 import java.math.BigDecimal;
@@ -66,9 +66,9 @@ public class Registos{
       while(writer != 0 || writers_waiting > 0){
         System.out.println("> Acquiring Read Lock...\n");
         reader_wait.await();
+        readers++;
         System.out.println("> Read Lock Acquired.\n");
       }
-      readers++;
     }catch(InterruptedException e){
       e.printStackTrace();
     }finally{
@@ -89,8 +89,8 @@ public class Registos{
 
   /** Métodos comuns entre os vários métodos públicos */
   private Usuario get_user(String username){
-      Usuario usuario = this.user_list.get(username);
-      return usuario;
+    Usuario usuario = this.user_list.get(username);
+    return usuario;
   }
 
   private double get_estimate(Usuario usuario){
@@ -98,9 +98,13 @@ public class Registos{
   }
 
   private void write_message(BufferedWriter out, String message) throws IOException{
-    out.write(message);
-    out.newLine();
-    out.flush();
+    try{
+      out.write(message);
+      out.newLine();
+      out.flush();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
   }
 
   /** Métodos públicos a ser usados pelo Worker */
@@ -115,13 +119,14 @@ public class Registos{
     this.readlock();
     try{
       Usuario usuario = user_list.get(username);
+      usuario.lock();
+      this.readunlock();
       usuario.set_logged_in(true);
       // O usuário acaba de se ligar novamente ao servidor, logo o socket é diferente
       usuario.set_bufferedwriter(out);
+      usuario.unlock();
       result = usuario.get_logged_in();
-    }
-    finally{
-      this.readunlock();
+    }finally{
       return result;
     }
   }
@@ -136,10 +141,12 @@ public class Registos{
     this.readlock();
     try{
       Usuario usuario = user_list.get(username);
+      usuario.lock();
+      this.readunlock();
       usuario.set_logged_in(false);
       result = !usuario.get_logged_in();
+      usuario.unlock();
     }finally{
-      this.readunlock();
       return result;
     }
   }
@@ -148,12 +155,14 @@ public class Registos{
   public Boolean check_if_user_is_logged_in(String username){
     Boolean result = false;
 
+    this.readlock();
     try{
-      this.readlock();
       Usuario usuario = user_list.get(username);
-      result = usuario.get_logged_in();
-    }finally{
+      usuario.lock();
       this.readunlock();
+      result = usuario.get_logged_in();
+      usuario.unlock();
+    }finally{
       return result;
     }
   }
@@ -170,8 +179,8 @@ public class Registos{
       }else{
         System.out.println("> Username does not exist, waiting for client...");
       }
-    }finally{
       this.readunlock();
+    }finally{
       return result;
     }
   }
@@ -181,6 +190,7 @@ public class Registos{
   public Boolean register_new_user(String username, String password, BufferedWriter bufferedwriter){
     Boolean result = false;
 
+    System.out.println("> Registering new user...\n");
     this.writelock();
     try{
       Usuario usuario = new Usuario(bufferedwriter, password);
@@ -198,14 +208,12 @@ public class Registos{
   public Boolean login_user(String username, String password){
     Boolean result = false;
 
+    this.readlock();
     try{
-      this.readlock();
-      if(get_user(username) != null){
-        Usuario usuario = get_user(username);
-        result = (password.equals(usuario.get_password()));
-      }else{
-        System.out.println("> Username does not exist, waiting for client...");
-      }
+      Usuario usuario = get_user(username);
+      usuario.lock();
+      result = (password.equals(usuario.get_password()));
+      usuario.unlock();
     }finally{
       this.readunlock();
       return result;
@@ -226,56 +234,51 @@ public class Registos{
   public Boolean set_casos_and_update_all_users(String username, int casos){
     Boolean result = false;
     double media = 0.0d;
-    ArrayList<Usuario> lista = new ArrayList<Usuario>();
 
+    this.readlock();
     try{
-      this.readlock();
-      // actualiza o número de casos que este usuário conhece.
-      Usuario usuario_actual = get_user(username);
-      usuario_actual.set_casos(casos);
-      BufferedWriter out_usuario_actual = usuario_actual.get_bufferedwriter();
+      BufferedWriter out_usuario_actual = null;
+      int n_users = this.user_list.size();
+      ArrayList<BufferedWriter> array_out = new ArrayList<BufferedWriter>(n_users);
 
-      // se a actualização correu com sucesso:
-      if(casos == usuario_actual.get_casos()){
-        if(out_usuario_actual != null){ // só para proteger de NullPointerException...
-          write_message(out_usuario_actual, "> The number of infected has been successfully registered. Thank you!");
-          result = true;
+      for(Usuario usuario : this.user_list.values()){
+        usuario.lock();
+        if(get_user(username) == usuario){
+          //
+          usuario.set_casos(casos);
         }
-        // 1º - calculamos a nova estimativa da proporção média.
-        int n_users = this.user_list.size();
-        for(Usuario usuario : this.user_list.values()){
-          if(usuario_actual != usuario){
-            usuario.lock();
-            lista.add(usuario);
-          }
-          double casos_usuario = (double) get_estimate(usuario);
-          if(casos_usuario <= 0){
-            n_users--;
+        if(casos == usuario.get_casos()){
+          out_usuario_actual = usuario.get_bufferedwriter();
+          array_out.add(usuario.get_bufferedwriter());
+          if(out_usuario_actual != null){ // só para proteger de NullPointerException...
+            write_message(out_usuario_actual, "> The number of infected has been successfully registered. Thank you!");
+            result = true;
           }else{
-            media += casos_usuario;
+            write_message(out_usuario_actual, "Failed to update the number of infected you know. Please try again.");
           }
         }
-        media = media/n_users;
-        // Usamos BigDecimal para arredondar (a 2 casas) porque é o mais eficaz nestes cálculos.
-        BigDecimal media_rounded = new BigDecimal(Double.toString(media));
-        media_rounded = media_rounded.setScale(2, RoundingMode.HALF_UP);
+        double casos_usuario = (double) get_estimate(usuario);
+        if(casos_usuario < 0){
+          n_users--;
+        }else{
+          media += casos_usuario;
+        }
+        usuario.unlock();
+      }
 
-        // 2º - enviamos a nova estimativa a todos os usuários.
-        for(Usuario usuario : this.user_list.values()){
-          if(usuario.get_logged_in()){
-            BufferedWriter out = usuario.get_bufferedwriter();
-            if(out != null){ // só para proteger de NullPointerException...
-              write_message(out, "\n> The estimate has been updated.\n> The new estimate of the average proportion of people infected is " + media_rounded + ".");
-              result = true;
-            }
+      media = media/n_users;
+
+      // Usamos BigDecimal para arredondar (a 2 casas) porque é o mais eficaz nestes cálculos.
+      BigDecimal media_rounded = new BigDecimal(Double.toString(media));
+      media_rounded = media_rounded.setScale(2, RoundingMode.HALF_UP);
+
+      // 2º - enviamos a nova estimativa a todos os usuários.
+      for(BufferedWriter out : array_out){
+          if(out != null){ // só para proteger de NullPointerException...
+            write_message(out, "\n> The estimate has been updated.\n> The new estimate of the average proportion of people infected is " + media_rounded + ".");
+            result = true;
           }
-          Collections.reverse(lista);
-          for(Usuario usuarioo : lista){
-            usuarioo.unlock();
-          }
-        }
-      }else{
-        write_message(out_usuario_actual, "Failed to update the number of infected you know. Please try again.");
+
       }
     }catch(IOException e){
       //TODO: melhorar o tratamento de excepções.
