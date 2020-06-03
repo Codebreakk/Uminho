@@ -109,19 +109,21 @@ char * integer_to_string(int integer){
 }
 
 // TODO: testar. Já está em uso.
-int tokenize(int ARRAY_SIZE, char* buf, char * args[]){
+// Divide a string source pelo token "espaço" (" ") em várias strings e coloca no
+// String array destination. array_size é o tamanho do array
+int tokenize(char * destination[], char* source, int array_size){
   int n = 0;
 
-  args[n] = strtok(buf, " ");
-  while(args[n] && n < ARRAY_SIZE - 1){
-    int len = strlen(args[0]);
-    // remove o '\n' no final de algumas strings para evitar falhar comparações
-    // com o "strcmp".
-    if((args[n])[len - 1] == '\n') {
-      (args[n])[len -1] = '\0';
+  destination[n] = strtok(source, " ");
+  while(destination[n] && n < array_size - 1){
+    int len = strlen(destination[0]);
+    // remove o newline ('\n') no final de algumas strings para evitar falhar
+    // comparações com o "strcmp".
+    if((destination[n])[len - 1] == '\n') {
+      (destination[n])[len -1] = '\0';
     }
 
-    args[++n] = strtok(NULL, " \n");
+    destination[++n] = strtok(NULL, " \n");
   }
 
   return 0;

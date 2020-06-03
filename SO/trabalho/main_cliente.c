@@ -10,19 +10,19 @@ int main(int argc, char * argv[]){
     while((total = read(0, buf, BUF_SIZE)) != 0){
       buf[--total] = '\0';
       char* args[ARRAY_SIZE];
-      my_printf2("buf = %s\n", buf);
+      //my_printf2("buf = %s\n", buf); //DEBUG
       int length_args = 0;
       if(strncmp(buf, EXECUTAR, 8) == 0){
-        my_printf2("9 = %s\n", buf+9);
+        // my_printf2("9 = %s\n", buf+9); // DEBUG
         args[0] = EXECUTAR;
         args[1] = malloc(total - 11);
         // TODO: (este strncpy está a copiar mal.) Já parece funcionar.
         strncpy(args[1], buf + 10, strlen(buf) - 11); // executar "wc | ls | ls -l"
-        my_printf2("After strncpy: %s\n", args[1]);
+        //my_printf2("After strncpy: %s\n", args[1]); //DEBUG
         length_args = 2;
       }else{
         // TODO: testar e melhorar esta função (ficheiro mySOlib)
-        tokenize(ARRAY_SIZE, buf, args);
+        tokenize(args, buf, ARRAY_SIZE);
         while(args[length_args] != NULL){
           length_args++;
         }

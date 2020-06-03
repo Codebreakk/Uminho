@@ -129,7 +129,7 @@ int run_argus(int argc, char * argv[]){
     open_fifo_client_server();
     // escrever comando para o servidor
     write(fifo_fd[0], comando, strlen(comando));
-    write(1, comando, strlen(comando));
+    //write(1, comando, strlen(comando)); // DEBUG
     // my_printf2("\ncomando final: %s|\n",comando);
     // fechar fifo de escrita do cliente para o servidor
     close_fifo_client_server();

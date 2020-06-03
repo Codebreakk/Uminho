@@ -87,53 +87,114 @@ int tempo_execucao(int segundos){
   return 0;
 }
 
+int * pids;
+int pids_count = 0;
+int timeout = 0;
+
 /** Executar uma tarefa (opção «-e "p1|p2...|pn"» da linha de comando). */
 int executar(char* comandos){
   char * coms[ARRAY_SIZE];
+  int result = -1;
+  int pid = -1, status = -1;
   parse_comandos(ARRAY_SIZE, comandos, coms);
 
   int sizeof_coms = sizeof_string_array(coms);
-  my_printf2("sizeof_coms %d\n", sizeof_coms);
+  pids = (int *) malloc(sizeof(int)*sizeof_coms);
+  // my_printf2("sizeof_coms %d\n", sizeof_coms); // DEBUG
 
   int n_pipes = 1;
-
-  if(sizeof_coms > 1){
-    n_pipes = sizeof_coms - 1;
-  }
-
-  int pipe_array[n_pipes][2];
-
-  for(int i = 0; coms[i] != NULL; i++){
-    // Criar pipe anónimo
-    if(pipe(pipe_array[i]) < 0){
-      perror("pipe_array");
-      my_printf2("Failed to create pipe_array[%d]\n", i);
-      return 1;
-    }
+  if(sizeof_coms == 1){
+    // Partir o comando nos seus argumentos
+    char* args[ARRAY_SIZE];
+    tokenize(args, coms[0], ARRAY_SIZE);
 
     if(fork() == 0){
+      result = execvp(args[0], args);
+      // sleep(10); //DEBUG
+    }else{
+      wait(&status);
+      return WEXITSTATUS(status);
+    }
+  }else if(sizeof_coms > 1){
+    n_pipes = sizeof_coms - 1;
+
+    int pipe_array[n_pipes][2];
+
+    // Cada iteração representa 1 comando com os seus argumentos
+    for(int i = 0; coms[i] != NULL; i++){
+      // Partir o comando nos seus argumentos
+      char* args[ARRAY_SIZE];
+      tokenize(args, coms[i], ARRAY_SIZE);
+
+      // Criar pipe anónimo
+      if(pipe(pipe_array[i]) < 0){
+        perror("pipe_array");
+        my_printf2("Failed to create pipe_array[%d]\n", i);
+        return 1;
+      }
+
+      if((pid = fork()) == 0){
+        // Se estivermos no último comando, não precisamos de fechar o STDIN do
+        // próximo pipe porque esse pipe não existe.
+        if(i < n_pipes){
+          close(pipe_array[i][0]);
+        }
+
+        // Se estivermos no primeiro comando não recebemos os dados de um pipe,
+        // logo não copiamos nenhum pipe para o STDIN.
+        if(i > 0){
+          dup2(pipe_array[i-1][0], 0);
+          close(pipe_array[i-1][0]);
+        }
+
+        // Se estivermos no último comando escrevemos para o STDOUT normal, logo
+        // não copiamos nenhum pipe para o STDOUT.
+        if(i < n_pipes){
+          dup2(pipe_array[i][1], 1);
+          close(pipe_array[i][1]);
+        }
+
+        // if(i == n_pipes){ // copia o fifo_fd no último comando para o STDOUT
+        //   dup2(fifo_fd[1], 1);
+        //   close_fifo_server_client();
+        // }
+
+        result = execvp(args[0], args);
+        // if(result >= 0){
+        //   exit(result);
+        // }else{
+        //   exit(-1);
+        // }
+      }
+      // Processo pai fecha os pipes que os seus filhos já usaram.
+      if(i > 0) close(pipe_array[i-1][0]);
       if(i < n_pipes){
         close(pipe_array[i][0]);
-      }
-
-      if(i > 0){
-        dup2(pipe_array[i-1][0], 0);
-        close(pipe_array[i-1][0]);
-      }
-
-      if(i < n_pipes){
-        dup2(pipe_array[i][1], 1);
         close(pipe_array[i][1]);
       }
+      // if(i == n_pipes){
+      //   dup2(fifo_fd[1], 1);
+      //   close_fifo_server_client();
+      // }
 
-      if(i > 0) close(pipe_array[i-1][i-1]);
-      if(i < n_pipes) close(pipe_array[i][1]);
+      // check return value
+      pids[i] = pid;
+      // my_printf2("%s \n", coms[i]);
     }
 
-    // my_printf2("%s \n", coms[i]);
+    // tempo máximo de inactividade.
+    if(max_inactividade >= 0){
+      // alarm(0) cancela os alarmes activos.
+      alarm(max_inactividade);
+    }
+
+    for (int i = 0; i < sizeof_coms; i++) {
+      wait(NULL);
+    }
   }
 
-  return 0;
+  return result;
+  // return 0;
 }
 
 /** Listar tarefas em execução (opção "-l" da linha de comando). */

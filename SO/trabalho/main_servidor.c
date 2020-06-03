@@ -44,7 +44,7 @@ int main(int argc, char * argv[]){
 
       // não podemos ler o buf por completo, apenas até à posição "bytes_read"
       if(strncmp(buf, TEMPO_INACTIVIDADE, bytes_read) == 0){
-        tokenize(ARRAY_SIZE, buf, args);
+        tokenize(args, buf, ARRAY_SIZE);
         int segundos = atoi(args[1]);
         // abrir fifo de escrita do servidor para o cliente
         open_fifo_server_client();
@@ -53,7 +53,7 @@ int main(int argc, char * argv[]){
         close_fifo_server_client();
 
       }else if(strncmp(buf, TEMPO_EXECUCAO, bytes_read) == 0){
-        tokenize(ARRAY_SIZE, buf, args);
+        tokenize(args, buf, ARRAY_SIZE);
         int segundos =  atoi(args[1]);
         // abrir fifo de escrita do servidor para o cliente
         open_fifo_server_client();

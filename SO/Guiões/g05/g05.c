@@ -197,16 +197,16 @@ int ex5(){
   if(fork() == 0){
     // pipe_array[0][0]
     // pipe_array[0][1]
-    close(pipe_array[0][0]);
+    close(pipe_array[0][0]); // Vamos ler do STDIN e não de um pipe.
 
-    dup2(pipe_array[0][1], 1);
-    close(pipe_array[0][1]);
+    dup2(pipe_array[0][1], 1); // Copiamos o pipe para o STDOUT.
+    close(pipe_array[0][1]); // Fechamos o pipe (pq já copiamos).
 
     // 1 -> pipe_array[0][1]
     execlp("grep", "grep", "-v", "^#", "/etc/passwd", NULL);
     _exit(1);
   }
-
+  // processo pai fecha o pipe do if acima.
   close(pipe_array[0][1]);
 
   // Criar pipe.
@@ -220,19 +220,19 @@ int ex5(){
     // pipe_array[0][0]
     // pipe_array[1][0]
     // pipe_array[1][1]
-    close(pipe_array[1][0]);
+    close(pipe_array[1][0]); // O filho actual fecha o STDIN do próximo pipe
 
-    dup2(pipe_array[0][0], 0);
+    dup2(pipe_array[0][0], 0); // O pipe[0][0] é o seu STDIN
     close(pipe_array[0][0]);
 
-    dup2(pipe_array[1][1], 1);
+    dup2(pipe_array[1][1], 1); // pipe[1][1] é o seu STDOUT
     close(pipe_array[1][1]);
 
     execlp("cut", "cut", "-f7", "-d:", NULL);
 
     _exit(1);
   }
-
+  // processo pai fecha os pipes do if acima.
   close(pipe_array[0][0]);
   close(pipe_array[1][1]);
 
@@ -248,29 +248,35 @@ int ex5(){
     *   pipe_array[2][0]
     *   pipe_array[2][1]
     */
-    close(pipe_array[2][0]);
+    close(pipe_array[2][0]); // O filho actual fecha o STDIN do próximo pipe
 
-    dup2(pipe_array[1][0], 0);
+    dup2(pipe_array[1][0], 0); // O pipe[1][0] é o seu STDIN
     close(pipe_array[1][0]);
 
-    dup2(pipe_array[2][1], 1);
+    dup2(pipe_array[2][1], 1); // O pipe[2][1] é o seu STDOUT
     close(pipe_array[2][1]);
 
     execlp("uniq", "uniq", NULL);
     _exit(1);
   }
+  // processo pai fecha os pipes do if acima.
   close(pipe_array[1][0]);
   close(pipe_array[2][1]);
 
   // 3 - Criar processo wc -l
   if(fork() == 0){
     // pipe_array[2][0]
-    dup2(pipe_array[2][0], 0);
+
+    // Ultimo processo, apenas tem de copiar o seu pipe para STDIN
+    dup2(pipe_array[2][0], 0);// O pipe[2][0] é o seu STDIN
     close(pipe_array[2][0]);
+
+    // O seu STDOUT é o 1.
 
     execlp("wc", "wc", "-l", NULL);
     _exit(1);
   }
+  // processo pai fecha os pipes do if acima.
   close(pipe_array[2][0]);
 
   for (int i = 0; i < commands; i++) {

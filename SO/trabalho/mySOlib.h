@@ -12,7 +12,7 @@ int my_printf2(char* string,...);
 
 char * integer_to_string(int integer);
 
-int tokenize(int ARRAY_SIZE, char* buf, char * args[]);
+int tokenize(char * destination[], char* source, int array_size);
 
 ssize_t my_readln(int fd, char *line, size_t size);
 
