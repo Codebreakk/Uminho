@@ -89,6 +89,12 @@ char * integer_to_string(int integer){
   char* string;
   int is_negative = 0;
 
+  if(integer == 0){
+    string = malloc(sizeof("0"));
+    strcpy(string, "0");
+    return string;
+  }
+
   if(integer < 0){
     is_negative = 1;
   }
@@ -111,9 +117,9 @@ char * integer_to_string(int integer){
 // TODO: testar. Já está em uso.
 // Divide a string source pelo token "espaço" (" ") em várias strings e coloca no
 // String array destination. array_size é o tamanho do array
-int tokenize(char * destination[], char* source, int array_size){
+int tokenize(char* destination[], char* source, int array_size){
   int n = 0;
-
+  // my_printf2("###\nTOKENIZE: %s\n###\n", source); // DEBUG
   destination[n] = strtok(source, " ");
   while(destination[n] && n < array_size - 1){
     int len = strlen(destination[0]);

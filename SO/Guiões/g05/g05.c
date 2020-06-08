@@ -204,7 +204,7 @@ int ex5(){
 
     // 1 -> pipe_array[0][1]
     execlp("grep", "grep", "-v", "^#", "/etc/passwd", NULL);
-    _exit(1);
+    _exit(1); // se execlp der erro, retorna 1;
   }
   // processo pai fecha o pipe do if acima.
   close(pipe_array[0][1]);
@@ -230,7 +230,7 @@ int ex5(){
 
     execlp("cut", "cut", "-f7", "-d:", NULL);
 
-    _exit(1);
+    _exit(1); // se execlp der erro, retorna 1;
   }
   // processo pai fecha os pipes do if acima.
   close(pipe_array[0][0]);
@@ -257,7 +257,7 @@ int ex5(){
     close(pipe_array[2][1]);
 
     execlp("uniq", "uniq", NULL);
-    _exit(1);
+    _exit(1); // se execlp der erro, retorna 1;
   }
   // processo pai fecha os pipes do if acima.
   close(pipe_array[1][0]);
@@ -274,13 +274,14 @@ int ex5(){
     // O seu STDOUT é o 1.
 
     execlp("wc", "wc", "-l", NULL);
-    _exit(1);
+    _exit(1); // se execlp der erro, retorna 1;
   }
   // processo pai fecha os pipes do if acima.
   close(pipe_array[2][0]);
 
   for (int i = 0; i < commands; i++) {
     wait(NULL);
+    // verificar estado, etc.
   }
 
   _exit(0);

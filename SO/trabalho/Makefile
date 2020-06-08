@@ -13,4 +13,4 @@ run:
 	./argus
 
 clean:
-	rm -f *.o argus log.idx log argus_server fifo*
+	rm -f *.o argus log.idx log argus_server fifo* historico

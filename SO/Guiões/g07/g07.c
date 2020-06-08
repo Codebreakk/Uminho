@@ -79,11 +79,11 @@ int ex2(int argc, char * argv[]){
 
       if(execlp("grep", "grep", argv[1], files[i], NULL) < 0){
         perror("grep exec");
-        _exit(10);
+        _exit(1); //_exit(10);
       }
     }
 
-    // check return value
+    // TODO: check return value.
     pids[i] = pid;
   }
 
@@ -91,22 +91,25 @@ int ex2(int argc, char * argv[]){
   int status = 0;
   int found = 0;
   int pid = -1;
+
+  // Enquanto não for encontrada a palavra e existirem processos para esperar...
   while(!found && (pid = wait(&status)) > 0){
     if(WIFEXITED(status)){
       switch (WEXITSTATUS(status)){
-        case 0:
+        case 0: // correu com sucesso.
           printf("grep %d found the word.\n", pid);
           found = 1;
           break;
-        case 1:
+        case 1: // ocorreu sem sucesso.
           printf("grep %d did not find the word.\n", pid);
           break;
-        default:
+        default: // ocorreu algum erro.
           my_printf("something went wrong...\n");
       }
     }
   }
 
+  // Se sair pelo que não encontrou, então também diz que não encontrou.
   if(!found){
     return 1;
   }
@@ -151,7 +154,6 @@ int ex3(int argc, char * argv[]){
   int files_count =  argc - 2;
   pids_count = files_count;
   char ** files = argv + 2; // files[0] = argv[2]
-  //int pids[files_count];
   pids = (int *) malloc(sizeof(int)*pids_count);
 
   //criar múltiplos processos grep por ficheiro.
@@ -162,7 +164,7 @@ int ex3(int argc, char * argv[]){
 
       if(execlp("grep", "grep", argv[1], files[i], NULL) < 0){
         perror("grep exec");
-        _exit(10);
+        _exit(1);
       }
     }
 
@@ -171,15 +173,16 @@ int ex3(int argc, char * argv[]){
   }
 
   // Programas grep a executar...
-  alarm(10);
   if(signal(SIGALRM, timeout_handler) == SIG_ERR){
     perror("SIGALRM Failed.");
-    exit(1);
+    return 10;
   }
+  alarm(10);
 
   int status = 0;
   int found = 0;
   int pid = -1;
+  // Enquanto não for encontrado o valor, executamos esta espera.
   while(!found && (pid = wait(&status)) > 0){
     if(WIFEXITED(status)){
       switch (WEXITSTATUS(status)){
@@ -205,14 +208,15 @@ int ex3(int argc, char * argv[]){
     return 1;
   }
 
-  // Terminar todos os processos restantes...
+  // Terminar todos os processos restantes... Este ciclo é executado apenas após
+  // o valor ter sido encontrado.
   for(int i = 0; i < files_count; i++){
     kill(pids[i], SIGKILL);
 
     if(waitpid(pids[i], &status, 0) > 0){
-      if(WIFEXITED(status)){
+      if(WIFEXITED(status)){ // Estes terminaram normalmente.
         printf("grep %d finished.\n", pids[i]);
-      }else{
+      }else{ // Estes ainda não tinham terminado.
         printf("grep %d killed.\n", pids[i]);
       }
     }

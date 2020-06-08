@@ -52,7 +52,7 @@ void replace_flags_with_names(char * argv[]){
 // Recebe os comandos já tratados pela main e, se o comando for válido, envia
 // para o servidor
 int run_argus(int argc, char * argv[]){
-  //my_printf2("%d %s %s\n", argc, argv[0], argv[1]);
+  //my_printf2("%d %s %s\n", argc, argv[0], argv[1]); // DEBUG
   if(strcmp(argv[0], TEMPO_INACTIVIDADE) == 0 && argc == 2){
     // tempo-inactividade: ./argus -i n
     // Pedir ao servidor para executar "tempo_inactividade(n)"
@@ -67,6 +67,7 @@ int run_argus(int argc, char * argv[]){
     open_fifo_client_server();
     // escrever comando para o servidor
     write(fifo_fd[0], comando, strlen(comando));
+    //my_printf(comando); // DEBUG
     // fechar fifo de escrita do cliente para o servidor
     close_fifo_client_server();
 
@@ -114,23 +115,23 @@ int run_argus(int argc, char * argv[]){
     // fechar fifo de escrita do cliente para o servidor
     // Concatenação dos argumentos para uma única string.
 
-    // my_printf("we're in.\n");
+    // my_printf("we're in.\n"); // DEBUG
     char * comando = malloc(sizeof(argv[0]) + sizeof(argv[1]) + sizeof(WHITESPACE));
     strcpy(comando, argv[0]);
-    // my_printf2("comando 0: %s\n", comando);
+    // my_printf2("comando 0: %s\n", comando); // DEBUG
 
     strcat(comando, WHITESPACE);
-    // my_printf2("comando 1: %s\n", comando);
+    // my_printf2("comando 1: %s\n", comando); // DEBUG
 
     strcat(comando, argv[1]);
-    // my_printf2("comando 2: %s\n", comando);
+    // my_printf2("comando 2: %s\n", comando); // DEBUG
 
     // abrir fifo de escrita do cliente para o servidor
     open_fifo_client_server();
     // escrever comando para o servidor
     write(fifo_fd[0], comando, strlen(comando));
     //write(1, comando, strlen(comando)); // DEBUG
-    // my_printf2("\ncomando final: %s|\n",comando);
+    // my_printf2("\ncomando final: %s|\n",comando); // DEBUG
     // fechar fifo de escrita do cliente para o servidor
     close_fifo_client_server();
 
@@ -148,12 +149,50 @@ int run_argus(int argc, char * argv[]){
   }else if(strcmp(argv[0], LISTAR) == 0 && argc == 1){
     // listar:             ./argus -l
     // Pedir ao servidor para executar "listar()"
+
+    // abrir fifo de escrita do cliente para o servidor
+    open_fifo_client_server();
+    // escrever comando para o servidor
+    write(fifo_fd[0], argv[0], strlen(argv[0]));
+    // fechar fifo de escrita do cliente para o servidor
+    close_fifo_client_server();
+
+    char buf[BUF_SIZE];
+    ssize_t bytes_read = 0;
+    // abrir fifo de leitura do servidor para o cliente
+    open_fifo_server_client();
+    // ler os dados escritos para o fifo e escrever para o buf
+    while((bytes_read = read(fifo_fd[1], buf, BUF_SIZE)) != 0){
+      // escrever do buf para o STDOUT
+      write(1, buf, bytes_read);
+    }
+    // fechar fifo de leitura do servidor para o cliente
+    close_fifo_server_client();
   }else if(strcmp(argv[0], TERMINAR) == 0 && argc == 2){
     // terminar:           ./argus -t n
     // Pedir ao servidor para executar "terminar(n)"
   }else if(strcmp(argv[0], HISTORICO) == 0 && argc == 1){
     // historico:          ./argus -r
     // Pedir ao servidor para executar "historico()"
+    
+    // abrir fifo de escrita do cliente para o servidor
+    open_fifo_client_server();
+    // escrever comando para o servidor
+    write(fifo_fd[0], argv[0], strlen(argv[0]));
+    // fechar fifo de escrita do cliente para o servidor
+    close_fifo_client_server();
+
+    char buf[BUF_SIZE];
+    ssize_t bytes_read = 0;
+    // abrir fifo de leitura do servidor para o cliente
+    open_fifo_server_client();
+    // ler os dados escritos para o fifo e escrever para o buf
+    while((bytes_read = read(fifo_fd[1], buf, BUF_SIZE)) != 0){
+      // escrever do buf para o STDOUT
+      write(1, buf, bytes_read);
+    }
+    // fechar fifo de leitura do servidor para o cliente
+    close_fifo_server_client();
   }else if(strcmp(argv[0], AJUDA) == 0 && argc == 1) {
     // ajuda:              ./argus -h
     // Pedir ao servidor para executar "ajuda()"

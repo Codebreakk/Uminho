@@ -8,27 +8,36 @@ int main(int argc, char * argv[]){
     my_printf("\nargus$ ");
     // TODO: criar o nosso read para evitar problemas com o tamanho dos argumentos
     while((total = read(0, buf, BUF_SIZE)) != 0){
+      // my_printf2("total = %d\n", total); // DEBUG
       buf[--total] = '\0';
-      char* args[ARRAY_SIZE];
-      //my_printf2("buf = %s\n", buf); //DEBUG
-      int length_args = 0;
-      if(strncmp(buf, EXECUTAR, 8) == 0){
-        // my_printf2("9 = %s\n", buf+9); // DEBUG
-        args[0] = EXECUTAR;
-        args[1] = malloc(total - 11);
-        // TODO: (este strncpy está a copiar mal.) Já parece funcionar.
-        strncpy(args[1], buf + 10, strlen(buf) - 11); // executar "wc | ls | ls -l"
-        //my_printf2("After strncpy: %s\n", args[1]); //DEBUG
-        length_args = 2;
-      }else{
-        // TODO: testar e melhorar esta função (ficheiro mySOlib)
-        tokenize(args, buf, ARRAY_SIZE);
-        while(args[length_args] != NULL){
-          length_args++;
+      if(strlen(buf) > 0){
+        char* args[ARRAY_SIZE];
+        //my_printf2("buf = %s\n", buf); //DEBUG
+        int length_args = 0;
+        if(strncmp(buf, EXECUTAR, strlen(EXECUTAR)) == 0){
+          // my_printf2("9 = %s\n", buf+9); // DEBUG
+          args[0] = EXECUTAR;
+          args[1] = malloc(total - 11);
+          // my_printf2("strlen = %d.\n", strlen(buf)); //DEBUG
+          if(strlen(buf) > 10) {
+            // TODO: (este strncpy está a copiar mal.) Já parece funcionar.
+            strncpy(args[1], buf + 10, strlen(buf) - 11); // executar "wc | ls | ls -l"
+            //my_printf2("After strncpy: %s\n", args[1]); //DEBUG
+            length_args = 2;
+          }else{
+            length_args = 1;
+            args[1] = "";
+          }
+        }else{
+          // TODO: testar e melhorar esta função (ficheiro mySOlib)
+          tokenize(args, buf, ARRAY_SIZE);
+          while(args[length_args] != NULL){
+            length_args++;
+          }
         }
+        // Passar a lista dos argumentos para a função auxiliar que comunica com o servidor
+        run_argus(length_args, args);
       }
-      // Passar a lista dos argumentos para a função auxiliar que comunica com o servidor
-      run_argus(length_args, args);
       my_printf("\nargus$ ");
     }
   }else{
