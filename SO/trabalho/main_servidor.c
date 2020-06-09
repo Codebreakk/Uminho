@@ -2,41 +2,41 @@
 
 int main(int argc, char * argv[]){
 
-  my_printf("Starting Server...\n");
+  my_printf("A iniciar o Servidor...\n");
 
   queue_tarefas = malloc(sizeof(Queue));
   initQueue(queue_tarefas);
   // Verifica se os fifos já estão criados e cria-os se necessário.
   if(access(FIFO_CLIENT_SERVER, F_OK) == -1){
     if(mkfifo(FIFO_CLIENT_SERVER, 0640) < 0){
-      perror("mkfifo client server");
+      perror("Erro ao criar o FIFO cliente servidor.");
       //exit(1);
     }
-    my_printf("fifo client server has been created.\n");
+    my_printf("FIFO cliente servidor foi criado com sucesso.\n");
   }
 
   if(access(FIFO_SERVER_CLIENT, F_OK) == -1){
     if(mkfifo(FIFO_SERVER_CLIENT, 0640) < 0){
-      perror("mkfifo server client");
+      perror("Erro ao criar o FIFO servidor cliente.");
       //exit(1);
     }
-    my_printf("fifo server client has been created.\n");
+    my_printf("FIFO servidor cliente foi criado com sucesso.\n");
   }
 
   /** Abrir/criar ficheiro de log do servidor */
   log_fd = open(LOG, O_CREAT | O_TRUNC | O_WRONLY, 0640);
   if(log_fd < 0){
-    perror("open log_fd.");
+    perror("Erro ao abrir o log_fd.");
   }else{
-    my_printf("log_fd is now open.\n");
+    my_printf("log_fd foi aberto com sucesso.\n");
   }
 
   /** Abrir/criar ficheiro com histórico do servidor */
   historico_fd = open(HISTORICO, O_CREAT | O_TRUNC | O_WRONLY, 0640);
   if(historico_fd < 0){
-    perror("open historico_fd.");
+    perror("Erro ao abrir o historico_fd.");
   }else{
-    my_printf("historico_fd is now open.\n");
+    my_printf("historico_fd foi aberto com sucesso.\n");
   }
 
   // enquanto receber dados no fifo_client_server
@@ -57,16 +57,15 @@ int main(int argc, char * argv[]){
         // abrir fifo de escrita do servidor para o cliente
         open_fifo_server_client();
         tempo_inactividade(segundos);
-        my_printf2("Finished tempo-inactividade (%d seconds).\n", segundos);
+        my_printf2("Terminado tempo-inactividade (%d segundos).\n", segundos);
         close_fifo_server_client();
-
       }else if(strncmp(buf, TEMPO_EXECUCAO, strlen(TEMPO_EXECUCAO)) == 0){
         tokenize(args, buf, ARRAY_SIZE);
         int segundos =  atoi(args[1]);
         // abrir fifo de escrita do servidor para o cliente
         open_fifo_server_client();
         tempo_execucao(segundos);
-        my_printf2("Finished tempo-execucao (%d seconds).\n", segundos);
+        my_printf2("Terminado tempo-execucao (%d segundos).\n", segundos);
         close_fifo_server_client();
 
       }else if(strncmp(buf, EXECUTAR, strlen(EXECUTAR)) == 0){
@@ -74,29 +73,30 @@ int main(int argc, char * argv[]){
         strncpy(comando, buf, strlen(buf)-9);
         //my_printf2("comando (after): %s\n", buf); // DEBUG
         open_fifo_server_client();
-        setup_executar(buf + 9);
+        int r = setup_executar(buf + 9);
         // executar(buf + 9);
-        my_printf("Finished executar.\n");
+        my_printf("Terminado executar.\n");
+        my_printf2("Resultado da setup_executar = %d.\n", r);
         close_fifo_server_client();
       }else if(strncmp(buf, LISTAR, strlen(LISTAR)) == 0){
         // my_printf("LISTAR\n"); // DEBUG
         open_fifo_server_client();
         listar();
-        my_printf("Finished listar.\n");
+        my_printf("Terminado listar.\n");
         close_fifo_server_client();
       }else if(strncmp(buf, TERMINAR, strlen(TERMINAR)) == 0){
 
       }else if(strncmp(buf, HISTORICO, strlen(HISTORICO)) == 0){
         open_fifo_server_client();
         historico();
-        my_printf("Finished historico.\n");
+        my_printf("Terminado historico.\n");
         close_fifo_server_client();
       }else if(strncmp(buf, AJUDA, strlen(AJUDA)) == 0){
         // abrir fifo de escrita do servidor para o cliente
         open_fifo_server_client();
         // executar comando
         ajuda();
-        my_printf("Finished ajuda.\n");
+        my_printf("Terminado ajuda.\n");
         // fechar fifo de escrita do servidor para o cliente
         close_fifo_server_client();
       }
@@ -107,6 +107,6 @@ int main(int argc, char * argv[]){
 
   close(log_fd);
   close(historico_fd);
-  my_printf("Closing server...");
+  my_printf("A terminar o Servidor...");
   return 0;
 }

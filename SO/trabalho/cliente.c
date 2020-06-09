@@ -3,7 +3,7 @@
 int open_fifo_client_server(){
   // Abrir fifo de escrita para o servidor
   if((fifo_fd[0] = open(FIFO_CLIENT_SERVER, O_CREAT | O_TRUNC | O_WRONLY)) < 0){
-    perror("fifo client server open");
+    perror("Erro ao abrir o FIFO cliente servidor.");
     exit(1);
   }
   return fifo_fd[0];
@@ -18,7 +18,7 @@ int close_fifo_client_server(){
 int open_fifo_server_client(){
   // Abrir fifo de leitura do servidor
   if((fifo_fd[1] = open(FIFO_SERVER_CLIENT, O_RDONLY)) < 0){
-    perror("fifo server client open");
+    perror("Erro ao abrir o FIFO servidor cliente.");
     exit(1);
   }
   return fifo_fd[1];
@@ -52,7 +52,7 @@ void replace_flags_with_names(char * argv[]){
 // Recebe os comandos já tratados pela main e, se o comando for válido, envia
 // para o servidor
 int run_argus(int argc, char * argv[]){
-  //my_printf2("%d %s %s\n", argc, argv[0], argv[1]); // DEBUG
+  // my_printf2("%d %s %s\n", argc, argv[0], argv[1]); // DEBUG
   if(strcmp(argv[0], TEMPO_INACTIVIDADE) == 0 && argc == 2){
     // tempo-inactividade: ./argus -i n
     // Pedir ao servidor para executar "tempo_inactividade(n)"
@@ -67,7 +67,7 @@ int run_argus(int argc, char * argv[]){
     open_fifo_client_server();
     // escrever comando para o servidor
     write(fifo_fd[0], comando, strlen(comando));
-    //my_printf(comando); // DEBUG
+    // my_printf(comando); // DEBUG
     // fechar fifo de escrita do cliente para o servidor
     close_fifo_client_server();
 
@@ -90,7 +90,6 @@ int run_argus(int argc, char * argv[]){
     strcat(comando, argv[0]);
     strcat(comando, WHITESPACE);
     strcat(comando, argv[1]);
-
     // abrir fifo de escrita do cliente para o servidor
     open_fifo_client_server();
     // escrever comando para o servidor
@@ -130,7 +129,7 @@ int run_argus(int argc, char * argv[]){
     open_fifo_client_server();
     // escrever comando para o servidor
     write(fifo_fd[0], comando, strlen(comando));
-    //write(1, comando, strlen(comando)); // DEBUG
+    // write(1, comando, strlen(comando)); // DEBUG
     // my_printf2("\ncomando final: %s|\n",comando); // DEBUG
     // fechar fifo de escrita do cliente para o servidor
     close_fifo_client_server();
@@ -174,7 +173,7 @@ int run_argus(int argc, char * argv[]){
   }else if(strcmp(argv[0], HISTORICO) == 0 && argc == 1){
     // historico:          ./argus -r
     // Pedir ao servidor para executar "historico()"
-    
+
     // abrir fifo de escrita do cliente para o servidor
     open_fifo_client_server();
     // escrever comando para o servidor
