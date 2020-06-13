@@ -19,10 +19,12 @@ int main(int argc, char * argv[]){
           if(strlen(buf) > 10) {
             char* executar = buf + 10;
             char* pointer = strchr(executar, '"');
-            *pointer = '\0'; // apaga a partir do char '"' para a frente
-            // my_printf2("%s\n", executar); // DEBUG
-            strcpy(args[1], executar);
-            length_args = 2;
+            if(pointer != NULL){ // Se não encontrar as aspas, o comando não é válido.
+              *pointer = '\0'; // apaga a partir do char '"' para a frente
+              // my_printf2("%s\n", executar); // DEBUG
+              strcpy(args[1], executar);
+              length_args = 2;
+            }
           }else{
             length_args = 1;
             args[1] = "";

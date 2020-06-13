@@ -67,7 +67,6 @@ int run_argus(int argc, char * argv[]){
     open_fifo_client_server();
     // escrever comando para o servidor
     write(fifo_fd[0], comando, strlen(comando));
-    // my_printf(comando); // DEBUG
     // fechar fifo de escrita do cliente para o servidor
     close_fifo_client_server();
 
@@ -117,20 +116,15 @@ int run_argus(int argc, char * argv[]){
     // my_printf("we're in.\n"); // DEBUG
     char * comando = malloc(sizeof(argv[0]) + sizeof(argv[1]) + sizeof(WHITESPACE));
     strcpy(comando, argv[0]);
-    // my_printf2("comando 0: %s\n", comando); // DEBUG
 
     strcat(comando, WHITESPACE);
-    // my_printf2("comando 1: %s\n", comando); // DEBUG
 
     strcat(comando, argv[1]);
-    // my_printf2("comando 2: %s\n", comando); // DEBUG
 
     // abrir fifo de escrita do cliente para o servidor
     open_fifo_client_server();
     // escrever comando para o servidor
     write(fifo_fd[0], comando, strlen(comando));
-    // write(1, comando, strlen(comando)); // DEBUG
-    // my_printf2("\ncomando final: %s|\n",comando); // DEBUG
     // fechar fifo de escrita do cliente para o servidor
     close_fifo_client_server();
 
@@ -170,6 +164,29 @@ int run_argus(int argc, char * argv[]){
   }else if(strcmp(argv[0], TERMINAR) == 0 && argc == 2){
     // terminar:           ./argus -t n
     // Pedir ao servidor para executar "terminar(n)"
+    // Concatenação dos argumentos para uma única string.
+    char * comando = malloc(sizeof(argv[0]) + sizeof(argv[1]) + sizeof(char));
+    strcat(comando, argv[0]);
+    strcat(comando, WHITESPACE);
+    strcat(comando, argv[1]);
+    // abrir fifo de escrita do cliente para o servidor
+    open_fifo_client_server();
+    // escrever comando para o servidor
+    write(fifo_fd[0], comando, strlen(comando));
+    // fechar fifo de escrita do cliente para o servidor
+    close_fifo_client_server();
+
+    char buf[BUF_SIZE];
+    ssize_t bytes_read = 0;
+    // abrir fifo de leitura do servidor para o cliente
+    open_fifo_server_client();
+    // ler os dados escritos para o fifo e escrever para o buf
+    while((bytes_read = read(fifo_fd[1], buf, BUF_SIZE)) != 0){
+      // escrever do buf para o STDOUT
+      write(1, buf, bytes_read);
+    }
+    // fechar fifo de leitura do servidor para o cliente
+    close_fifo_server_client();
   }else if(strcmp(argv[0], HISTORICO) == 0 && argc == 1){
     // historico:          ./argus -r
     // Pedir ao servidor para executar "historico()"

@@ -2,7 +2,7 @@
 
 int max_inactividade = -1;
 int max_execucao = -1;
-int tarefa_id = 1;
+int tarefa_id = 0;
 
 // Inicializa a queue.
 void initQueue(Queue *q){
@@ -11,24 +11,23 @@ void initQueue(Queue *q){
 
 // Verifica se a queue está vazia.
 int isEmpty(Queue *q){
-  return ((q->inicio) == NULL);
+  return (q->inicio == NULL);
 }
 
 // Adiciona uma nova tarefa à queue. Retorna 0 se correr com sucesso, -1 c.c..
-int enqueue(Queue *q, char* comandos){
+int enqueue(Queue *q, char* comandos, int id, int pid){
   int r = 0; // Resultado da execução, começamos por assumir que corre com sucesso.
-  Tarefa *new;
-  new = malloc(sizeof(Tarefa));
+  Tarefa *new = malloc(sizeof(Tarefa));
   if(new == NULL){
     r = -1; // Falhou a alocação de memória, retorna erro;
   }
   else{
+    new->id = id;
+    new->pid = pid;
     new->comandos = comandos;
-    // my_printf2("new->comandos = %s\n", comandos); // DEBUG
-    new->id = tarefa_id++;
     new->estado = A_EXECUTAR;
     new->prox = NULL;
-    if(!isEmpty(q)){
+    if(!isEmpty(q)){ // LISTA NÃO VAZIA
       // Se a queue estiver vazia, q->fim == NULL, logo ocorre SEGFAULT.
       q->fim->prox = new;
     }
@@ -40,25 +39,31 @@ int enqueue(Queue *q, char* comandos){
   return r;
 }
 
-// Obtem o próximo elemento da Queue a ser tratado.
-int dequeue(Queue *q, char** comandos){
+// Remove o elemento com o id indicado da Queue.
+int dequeue(Queue *q, int id){
   int r = 0;
   Tarefa *tmp;
   if(q->inicio == NULL){
-    r = -1; // Não existem elementos na Queue, logo devolve erro;
+    // my_printf("NÃO EXISTEM ELEMENTOS\n");
+    r = ERRO; // Não existem elementos na Queue, logo devolve erro;
   }else{
-    // Retorna o "comandos" a ser usado.
-    *comandos = q->inicio->comandos; // TODO: testar!
-    // my_printf2("comandos = %s\n", *comandos); // DEBUG
-    r = q->inicio->id;
-    tmp = q->inicio;
-    q->inicio = q->inicio->prox;
-    if(q->inicio == NULL){
-      q->fim = NULL;
+    if(q->inicio->id == id){
+      // my_printf("PRIMEIRO ELEMENTO\n");
+      q->inicio = q->inicio->prox;
+    }else{
+      tmp = q->inicio;
+      while(tmp->prox != NULL){
+        // my_printf("OUTRO ELEMENTO\n");
+        if(tmp->prox->id == id){
+          tmp->prox = tmp->prox->prox;
+        }
+        tmp = tmp->prox;
+      }
+      free(tmp);
     }
-    free(tmp);
   }
-  return r; // retorna o id da tarefa.
+  listar();
+  return r; // retorna 0 em caso de sucesso, -1 caso contrário.
 }
 
 /** Abre o fifo do servidor para o cliente no modo de escrita */
@@ -103,14 +108,48 @@ int close_fifo_client_server(){
   return 0;
 }
 
+int write_to_historico(int id, char *coms_string, int estado){
+  char *id_as_string = integer_to_string(id);
+  int tamanho_estado = 0;
+  char *msg_estado;
+
+  if(estado == CONCLUIDA){
+    tamanho_estado = sizeof(MSG_CONCLUIDA);
+    msg_estado = malloc(tamanho_estado);
+    strcpy(msg_estado, MSG_CONCLUIDA);
+  }else if(estado == INACTIVIDADE){
+    tamanho_estado = sizeof(MSG_MAX_INACTIVIDADE);
+    msg_estado = malloc(tamanho_estado);
+    strcpy(msg_estado, MSG_MAX_INACTIVIDADE);
+  }else if(estado == EXECUCAO){
+    tamanho_estado = sizeof(MSG_MAX_EXECUCAO);
+    msg_estado = malloc(tamanho_estado);
+    strcpy(msg_estado, MSG_MAX_EXECUCAO);
+  }else if(estado == TERMINADA){
+    tamanho_estado = sizeof(MSG_TERMINADA);
+    msg_estado = malloc(tamanho_estado);
+    strcpy(msg_estado, MSG_TERMINADA);
+  }
+
+  int tamanho = sizeof(coms_string)+sizeof(id_as_string)+tamanho_estado+sizeof("#\n");
+  char *historico_msg = malloc(tamanho);
+  strcpy(historico_msg, "#");
+  strcat(historico_msg, id_as_string);
+  strcat(historico_msg, msg_estado);
+  strcat(historico_msg, coms_string);
+  strcat(historico_msg, "\n");
+  write(historico_fd, historico_msg, strlen(historico_msg));
+
+  return 0;
+}
+
 int parse_comandos(int array_size, char* buf, char * args[]){
   int n = 0;
 
   args[n] = strtok(buf, "|");
   while(args[n] && n < array_size - 1){
     int len = strlen(args[0]);
-    // remove o '\n' no final de algumas strings para evitar falhar comparações
-    // com o "strcmp".
+    // remove o '\n' no final de algumas strings para evitar falhar comparações com o "strcmp".
     if ((args[n])[len - 1] == '\n') {
       (args[n])[len -1] = '\0';
     }
@@ -151,12 +190,11 @@ int tempo_execucao(int segundos){
 int * pid_exec;
 int execution = 0;
 
-// TODO: Ainda só foi copiada da "timeout_handler" e não foi adaptada correctamente.
+/** Handler do SIGALRM para o tempo máximo de execução. */
 void execution_handler(int signum){
-  my_printf2("pid_exec = %d\n", &pid_exec); // DEBUG
-    if(pid_exec > 0){
-      // my_printf("OLA SERVIDOR.\n"); // DEBUG
+    if(*pid_exec > 0){
       kill(*pid_exec, SIGKILL);
+      my_printf2("[EXECUTION HANLDER] Matou o processo: %d.\n", *pid_exec);
     }
   execution = 1;
 }
@@ -167,62 +205,56 @@ void execution_handler(int signum){
 * cada tarefa.
 */
 int setup_executar(char* comandos){
-  int id = -1, result = -1, status = 0, pid = 0;
+  int pid = 0, new_id = ++tarefa_id;
   execution = 0; // Reset da flag que indica timeout da executar.
-  // 1º - Adicionar tarefa à queue.
+
+  // Safety-check para garantir que a queue_tarefas existe e foi inicializada.
   if(isEmpty(queue_tarefas)){
     if(queue_tarefas == NULL){
       queue_tarefas = malloc(sizeof(Queue));
     }
     initQueue(queue_tarefas);
   }
-  if(enqueue(queue_tarefas, comandos) < 0){
-      return -1; // Erro ao adicionar tarefa à queue.
-  }
-  char** comandos_aux = malloc(sizeof(comandos));
-  if((id = dequeue(queue_tarefas, comandos_aux) < 0)){
-    return -1; // Erro ao remover tarefa da queue.
-  }
-  // my_printf2("comandos_aux = %s\n", *comandos_aux); // DEBUG
 
-  // 3º - Definir tempo máximo de execução.
-  if(max_execucao >= 0){
-    if(signal(SIGALRM, execution_handler) == SIG_ERR){
-      perror("SIGALRM Falhou para o Execution Handler.");
-      _exit(-1);
-    }
-    alarm(max_execucao);
-  }
-  // sleep(20); // DEBUG
-
-  // 2º - Chamar "executar" para executar o comando.
+  // 1º - COLOCAR TAREFA EM EXECUÇÃO
   if((pid = fork()) == 0){
-    result = executar(*comandos_aux);
-    my_printf2("resultado = %d\n", result); // DEBUG
-    if(result > 0){
-      _exit(result);
-    }else{
-      _exit(-1);
-    }
-  }else{
-    // my_printf2("pid = %d\n", pid); // DEBUG
-    // o pai passa para uma var global o pid do filho, para o handler matar o processo.
+    result = executar(comandos, new_id);
+  }else{ // isto não precisa estar num else, visto que o filho faz _exit antes.
+    // 2º - ADICIONAR TAREFA À QUEUE
+    // o pai passa para uma var global o pid do filho, para o handler matar o processo
     pid_exec = &pid;
 
-    // 4º - esperar pelo fim da execução.
-    while((pid = wait(&status)) > 0){
-      if(WIFEXITED(status)){
-        // TODO: o que faço aqui??
-        my_printf("Executar terminou normalmente.\n");
-      }
+    char *aux = malloc(sizeof(comandos));
+    strcpy(aux, comandos);
+    if(enqueue(queue_tarefas, aux, new_id, pid) < 0){
+        return ERRO;
     }
+
+    // Definir tempo máximo de execução.
+    if(max_execucao >= 0){
+      if(signal(SIGALRM, execution_handler) == SIG_ERR){
+        perror("SIGALRM Falhou para o Execution Handler.");
+        _exit(ERRO);
+      }
+      alarm(max_execucao);
+    }
+
+    // 3º - INFORMAR O CLIENTE QUE A TAREFA FOI ADICIONADA
+    open_fifo_server_client();
+    char *msg_aux = "nova tarefa #";
+    char *id_as_string = integer_to_string(new_id);
+    char *nova_tarefa_msg = malloc(sizeof(msg_aux) + sizeof(id_as_string) + sizeof("\n"));
+    strcpy(nova_tarefa_msg, msg_aux);
+    strcat(nova_tarefa_msg, id_as_string);
+    strcat(nova_tarefa_msg, "\n");
+    write(fifo_fd[1], nova_tarefa_msg, strlen(nova_tarefa_msg));
+    close_fifo_server_client();
   }
 
   if(execution){ // tempo de execução foi excedido.
     my_printf("Tempo de execução foi excedido.\n");
     return EXECUCAO;
   }
-  // 5º - se terminou com sucesso, adicionar ao histórico, c.c. ainda não sei...
 
   return 0;
 }
@@ -232,66 +264,75 @@ int pids_count = 0;
 int timeout = 0;
 
 void timeout_handler(int signum){
+  my_printf("[TIMEOUT HANDLER] ");
   for(int i = 0; i < pids_count; i++){
+    my_printf2("pid = %d;  ", pids[i]);
     if(pids[i] > 0){
       kill(pids[i], SIGKILL);
     }
   }
+  my_printf("\n");
   timeout = 1;
 }
 
 /** Executar uma tarefa (opção «-e "p1|p2...|pn"» da linha de comando). */
-int executar(char* comandos){
+int executar(char* comandos, int id){
   char * coms[ARRAY_SIZE];
   int pid = -1, status = 0, i = 0;
+  char *id_as_string = integer_to_string(id);
+  char *coms_string = malloc(sizeof(comandos));
+  strcpy(coms_string, comandos);
 
   timeout = 0; // Reset do timeout.
+  // Divisão da tarefa nos seus vários comandos.
   parse_comandos(ARRAY_SIZE, comandos, coms);
 
-  int sizeof_coms = sizeof_string_array(coms);
-  pids_count = sizeof_coms;
-  if(sizeof_coms <= 0) return 1;
+  int n_coms = sizeof_string_array(coms);
+  pids_count = n_coms - 1;
+  if(n_coms <= 0) return ERRO; // Número inválido de comandos.
 
-  pids = (int *) malloc(sizeof(int) * sizeof_coms);
-  // my_printf2("sizeof_coms %d\n", sizeof_coms); // DEBUG
-  // my_printf2("comandos = %s\n", *comandos); // DEBUG
-  int n_pipes = 1;
-  if(sizeof_coms == 1){ // Não existem pipes.
-    // Partir o comando nos seus argumentos
+  // Lista de pids dos comandos.
+  pids = (int *) malloc(sizeof(int) * n_coms);
+  int n_pipes = n_coms - 1;
+  if(n_pipes == 0){ // Não existem pipes no comando.
+    // Partir o comando nos seus argumentos.
     char* args[ARRAY_SIZE];
     tokenize(args, coms[0], ARRAY_SIZE);
-
+    // Executar comando num processo filho.
     if(fork() == 0){
-      // my_printf2("%s\n", coms[0]); // DEBUG
-      // dup2(fifo_fd[1], 1);
-      // close_fifo_server_client();
+      // Escrita para o ficheiro de log do output
+      char *aux_tarefa_historico = "\n##### OUTPUT TAREFA ";
+      char *tarefa_historico = malloc(sizeof(aux_tarefa_historico)+sizeof(id_as_string)+sizeof("\n"));
+      strcpy(tarefa_historico, aux_tarefa_historico);
+      strcat(tarefa_historico, id_as_string);
+      strcat(tarefa_historico, "\n");
+      write(log_fd, tarefa_historico, strlen(tarefa_historico));
+      dup2(log_fd, 1);
+      close(log_fd);
       execvp(args[0], args);
-      exit(1);
+      _exit(ERRO);
     }else{
-      wait(&status);
-      close_fifo_server_client();
-      return WEXITSTATUS(status);
+      close(log_fd);
+      _exit(WEXITSTATUS(status)); // TODO: rever isto
     }
-  }else if(sizeof_coms > 1){
-    n_pipes = sizeof_coms - 1;
+  }else if(n_pipes >= 1){
+    // Lista de pipes para a tarefa.
     int pipe_array[n_pipes][2];
 
-    // Cada iteração representa 1 comando com os seus argumentos
+    // Cada iteração representa 1 comando com os seus argumentos.
     for(i = 0; coms[i] != NULL; i++){
       // Partir o comando nos seus argumentos
       char* args[ARRAY_SIZE];
-      // my_printf2("coms[%d] = %s\n", i, coms[i]); //DEBUG
-      // my_printf2("coms = %s\n", i, *coms); //DEBUG
       tokenize(args, coms[i], ARRAY_SIZE);
-      // my_printf2("args[%d] = %s\n", i, args[i]); // DEBUG
+
       // Criar pipe anónimo
       if(pipe(pipe_array[i]) < 0){
         perror("pipe_array");
         my_printf2("Falhou a criação do pipe_array[%d].\n", i);
-        return 1;
+        _exit(ERRO);
       }
 
-      if((pid = fork()) == 0){
+      if((pid = fork()) == 0){ // PROCESSO FILHO
         // Se estivermos no último comando, não precisamos de fechar o STDIN do
         // próximo pipe porque esse pipe não existe.
         if(i < n_pipes){
@@ -312,77 +353,79 @@ int executar(char* comandos){
           close(pipe_array[i][1]);
         }
 
-        // if(i == n_pipes){ // copia o fifo_fd no último comando para o STDOUT
-        //   dup2(fifo_fd[1], 1);
-        //   close_fifo_server_client();
-        // }
+        if(i == n_pipes){ // copia o fifo_fd no último comando para o STDOUT
+          dup2(log_fd, 1);
+          close(log_fd);
+        }
 
         execvp(args[0], args);
-        _exit(1); // execvp falhou.
+        _exit(ERRO); // apenas executa esta linha se execvp falhou.
+      }else{
+        // PROCESSO PAI
+        // fecha os pipes que os seus filhos já usaram.
+        if(i > 0) close(pipe_array[i-1][0]);
+        if(i < n_pipes){
+          close(pipe_array[i][0]);
+          close(pipe_array[i][1]);
+        }
+        if(i == n_pipes){
+          char *aux_tarefa_historico = "\n##### OUTPUT TAREFA ";
+          char *id_as_string = integer_to_string(id);
+          char *tarefa_historico = malloc(sizeof(aux_tarefa_historico)+sizeof(id_as_string)+sizeof("\n"));
+          strcpy(tarefa_historico, aux_tarefa_historico);
+          strcat(tarefa_historico, id_as_string);
+          strcat(tarefa_historico, "\n");
+          write(log_fd, tarefa_historico, strlen(tarefa_historico));
+          close(log_fd);
+        }
+        // TODO: check return value, não podem ser negativos.
+        pids[i] = pid;
+
+        // Definição do alarme max_inactividade (se existir).
+        if(max_inactividade >= 0){
+          if(signal(SIGALRM, timeout_handler) == SIG_ERR){
+            perror("SIGALRM Falhou para o Timeout Handler.");
+            _exit(ERRO);
+          }
+          my_printf2("ALARME CONFIGURADO: %d.\n", max_inactividade);
+          alarm(max_inactividade);
+        }
+
+        if(timeout){
+          my_printf2("Executar terminou por timeout.\n");
+          write_to_historico(id, coms_string, INACTIVIDADE);
+          _exit(INACTIVIDADE);
+        }
+
+        pid_t terminated_pid = wait(&status);
+
+        if(WIFEXITED(status)){
+          my_printf2("O processo %d terminou normalmente. COMANDO = \n", terminated_pid, );
+        }else{
+          // my_printf2("COMANDO = %s\n", args[0]); // DEBUG
+          my_printf2("O processo %d foi morto.\n", terminated_pid);
+        }
       }
-      // Processo pai fecha os pipes que os seus filhos já usaram.
-      if(i > 0) close(pipe_array[i-1][0]);
-      if(i < n_pipes){
-        close(pipe_array[i][0]);
-        close(pipe_array[i][1]);
-      }
-      // if(i == n_pipes){
-      //   close_fifo_server_client();
-      // }
-
-      // TODO: check return value, não podem ser negativos.
-      pids[i] = pid;
-      // my_printf2("%s \n", coms[i]); // DEBUG
     }
   }
 
-  // Definição do alarme max_inactividade se existir.
-  if(max_inactividade >= 0){
-    if(signal(SIGALRM, timeout_handler) == SIG_ERR){
-      perror("SIGALRM Falhou para o Timeout Handler.");
-      _exit(1);
-    }
-    alarm(max_inactividade);
-  }
-
-  while((pid = wait(&status)) > 0){
-    if(WIFEXITED(status)){
-      // TODO: o que faço aqui?
-      // O filho deste processo já terminou, logo podemos desactivar o alarme.
-      alarm(0);
-    }
-  }
-
-  if(timeout){
-    my_printf2("Timeout na função Executar. COMANDO: %s\n", coms[i]);
-    return INACTIVIDADE;
-  }
-
-  // TODO: verificar estado, etc.
-  while(!timeout && wait(&status) > 0){}
-  for (i = 0; i < sizeof_coms; i++) {
-    kill(pids[i], SIGKILL);
-    // Status check.
-    pid = wait(&status);
-    if(WIFEXITED(status)){ // Estes processos terminaram normalmente.
-      printf("Executar (%d) terminou normalmente.\n", pids[i]);
-    }else{ // Estes processos ainda não tinham terminado.
-      printf("Executar (%d) foi morta.\n", pids[i]);
-    }
-  }
-
-  return 0;
+  alarm(0);
+  my_printf("Executar terminou com sucesso.\n");
+  write_to_historico(id, coms_string, CONCLUIDA);
+  _exit(CONCLUIDA);
 }
 
 /** Listar tarefas em execução (opção "-l" da linha de comando). */
 int listar(){
-  Tarefa *iterator = malloc(sizeof(Tarefa));
+  Tarefa *iterator;
   if(!isEmpty(queue_tarefas)){
     my_printf("A Listar...\n");
-    for(iterator = queue_tarefas->inicio; iterator != NULL; iterator = iterator->prox){
+    iterator = queue_tarefas->inicio;
+    while(iterator != NULL){
       if(iterator->estado == A_EXECUTAR){
         my_printf2("#%d: %s\n", iterator->id, iterator->comandos);
       }
+      iterator = iterator->prox;
     }
   }else{
     char * message = "Não existem tarefas a executar.\n";
@@ -399,14 +442,16 @@ int terminar(int tarefa){
   if(!isEmpty(queue_tarefas)){
     my_printf("A procurar a Tarefa a terminar...\n");
     for(iterator = queue_tarefas->inicio; iterator != NULL; iterator = iterator->prox){
-      if(iterator->id == tarefa){
-        // TODO: Terminar tarefa, mas como se não temos o pid aqui?
-        //kill(pid_tarefa, SIGKILL);
-        //break;
+      if(iterator->id == tarefa && iterator->pid > 0){
+        kill(iterator->pid, SIGKILL);
+        dequeue(queue_tarefas, tarefa);
+        char *message = "Tarefa terminada.\n";
+        write(fifo_fd[1], message, strlen(message));
+        break;
       }
     }
   }else{
-    char * message = "Tarefa não encontrada.\n";
+    char *message = "Tarefa não encontrada.\n";
     write(fifo_fd[1], message, strlen(message));
   }
 
@@ -422,11 +467,11 @@ int historico(){
 int ajuda(){
   char buf[BUF_SIZE];
 
-  // Abrir ficheiro com a informação a imprimir
+  // Abrir ficheiro com a informação a imprimir.
   int file_help = open(HELP, O_RDONLY);
   if(file_help < 0){
     perror("Erro ao abrir o ficheiro help");
-    return 1;
+    return ERRO;
   }
 
   // ler do ficheiro para o buf e escrever para o fifo_client_server.
@@ -436,7 +481,5 @@ int ajuda(){
   }
 
   close(file_help);
-  // my_printf("Ajuda terminou com sucesso.\n");
-
   return 0;
 }

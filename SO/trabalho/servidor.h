@@ -9,6 +9,9 @@
 #include <signal.h>
 #include "mySOlib.h"
 
+/** No geral, se alguma função retornar -1 consideramos erro */
+#define ERRO -1
+
 /** nome de cada funcionalidade por extenso */
 #define TEMPO_INACTIVIDADE "tempo-inactividade"
 #define TEMPO_EXECUCAO "tempo-execucao"
@@ -49,11 +52,18 @@ int log_fd;
 int historico_fd;
 
 /** Lista de estados possíveis para cada tarefa. */
-#define A_EXECUTAR 0
-#define CONCLUIDA 1
+#define CONCLUIDA 0
+#define A_EXECUTAR 1
 #define INACTIVIDADE 2
 #define EXECUCAO 3
 #define TERMINADA 4
+
+/** Lista de mensagens escritas para o historico. */
+#define MSG_CONCLUIDA ", concluida: "
+#define MSG_MAX_INACTIVIDADE ", max inactividade: "
+#define MSG_MAX_EXECUCAO ", max execução: "
+#define MSG_TERMINADA ", terminada: "
+
 
 /** Definições da Queue que guarda as tarefas que estão a ser executadas. Esta
 * queue foi definida de acordo com os apontamentos da disciplina de Algoritmos
@@ -66,6 +76,7 @@ int historico_fd;
 typedef struct tarefa{
   char* comandos;
   int id;
+  int pid;
   int estado; // 0: a executar; 1: concluida; 2: inactividade; 3: execucao; 4: terminada.
   struct tarefa *prox;
 } Tarefa;
@@ -83,9 +94,9 @@ void initQueue(Queue *q);
 
 int isEmpty(Queue *q);
 
-int enqueue(Queue *q, char* comandos);
+int enqueue(Queue *q, char* comandos, int id, int pid);
 
-int dequeue(Queue *q, char** comandos);
+int dequeue(Queue *q, int id);
 
 /** Lista de funções para manipulação dos fifos. */
 int open_fifo_server_client();
@@ -95,6 +106,8 @@ int close_fifo_server_client();
 int open_fifo_client_server();
 
 int close_fifo_client_server();
+
+int write_to_historico(int id, char *coms_string, int estado);
 
 int parse_comandos(int array_size, char* buf, char * args[]);
 
@@ -109,7 +122,7 @@ int setup_executar(char* comandos);
 
 void timeout_handler(int signum);
 
-int executar(char* comandos);
+int executar(char* comandos, int id);
 
 int listar();
 
