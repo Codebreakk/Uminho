@@ -224,15 +224,15 @@ int tempo_execucao(int segundos){
 }
 
 int *pid_exec;
-int *tarefa_actual;
 int execution = 0;
 
 /** Handler do SIGALRM para o tempo máximo de execução. */
 void execution_handler(int signum){
-    if(*pid_exec > 0){
-      my_printf2("[EXECUTION HANLDER] terminou o processo: %d.\n", *pid_exec);
-      kill(getpid(), SIGKILL);
-    }
+  // Se pid < 0, não podemos fazer kill.
+  if(*pid_exec > 0){
+    my_printf2("[EXECUTION HANLDER] terminou o processo: %d.\n", *pid_exec);
+    kill(*pid_exec, SIGKILL);
+  }
   execution = 1;
 }
 
@@ -245,9 +245,7 @@ void sigchild_handler(int signum){
     if(WTERMSIG(child_status) == SIGKILL){ // O processo filho foi morto por SIGKILL
       dequeue_by_pid(queue_tarefas, child_pid, EXECUCAO);
     }
-  }
-  // Se o processo terminou:
-  if(WIFEXITED(child_status)){
+  }else if(WIFEXITED(child_status)){// Se o processo terminou:
     int return_val = WEXITSTATUS(child_status); // valor de retorno do filho.
 
     if(child_pid >= 0){
@@ -282,7 +280,6 @@ int setup_executar(char* comandos){
   if((pid = fork()) == 0){
     pid_t child_pid = getpid();
     pid_exec = &child_pid;
-    tarefa_actual = &new_id;
 
     // Definir tempo máximo de execução.
     if(max_execucao >= 0){
@@ -309,17 +306,17 @@ int setup_executar(char* comandos){
         return ERRO;
     }
 
-    // 3º - INFORMAR O CLIENTE QUE A TAREFA FOI ADICIONADA
-    open_fifo_server_client();
-    char *msg_aux = "nova tarefa #";
-    char *id_as_string = integer_to_string(new_id);
-    char *nova_tarefa_msg = malloc(sizeof(msg_aux) + sizeof(id_as_string) + sizeof("\n"));
-    strcpy(nova_tarefa_msg, msg_aux);
-    strcat(nova_tarefa_msg, id_as_string);
-    strcat(nova_tarefa_msg, "\n");
-    write(fifo_fd[1], nova_tarefa_msg, strlen(nova_tarefa_msg));
-    close_fifo_server_client();
   }
+  // 3º - INFORMAR O CLIENTE QUE A TAREFA FOI ADICIONADA
+  open_fifo_server_client();
+  char *msg_aux = "nova tarefa #";
+  char *id_as_string = integer_to_string(new_id);
+  char *nova_tarefa_msg = malloc(sizeof(msg_aux) + sizeof(id_as_string) + sizeof("\n"));
+  strcpy(nova_tarefa_msg, msg_aux);
+  strcat(nova_tarefa_msg, id_as_string);
+  strcat(nova_tarefa_msg, "\n");
+  write(fifo_fd[1], nova_tarefa_msg, strlen(nova_tarefa_msg));
+  close_fifo_server_client();
 
   return 0;
 }
@@ -376,12 +373,14 @@ int executar(char* comandos, int id){
 
       dup2(log_fd, 1);
       close(log_fd);
-      execvp(args[0], args);
-      _exit(ERRO);
+      if(execvp(args[0], args) < 0){
+        perror("ERRO execvp ");
+        _exit(ERRO);
+      }
     }else{
       close(log_fd);
       wait(&status);
-      return (WEXITSTATUS(status)); // TODO: rever isto
+      return (WEXITSTATUS(status));
     }
   }else if(n_pipes >= 1){
     // Lista de pipes para a tarefa.
@@ -440,8 +439,10 @@ int executar(char* comandos, int id){
           _exit(INACTIVIDADE);
         }
 
-        execvp(args[0], args);
-        _exit(ERRO); // apenas executa esta linha se execvp falhou.
+        if(execvp(args[0], args) < 0){
+          perror("ERRO execvp ");
+          _exit(ERRO); // apenas executa esta linha se execvp falhou.
+        }
       }else{
         // PROCESSO PAI
         // fecha os pipes que os seus filhos já usaram.
@@ -460,7 +461,6 @@ int executar(char* comandos, int id){
           write(log_fd, tarefa_historico, strlen(tarefa_historico));
           close(log_fd);
         }
-        // TODO: check return value, não podem ser negativos.
         pids[i] = pid;
 
         wait(&status);
@@ -468,11 +468,10 @@ int executar(char* comandos, int id){
           my_printf2("O processo %d terminou normalmente.\n", pid);
         }else{
           if(WIFSIGNALED(status)){
-            if(WTERMSIG(status) == 14){
+            if(WTERMSIG(status) == SIGALRM){
               // O processo filho for morto por SIGALRM.
               _exit(INACTIVIDADE);
             }
-
           }
           my_printf2("O processo %d foi morto.\n", pid);
         }
@@ -520,12 +519,16 @@ int terminar(int tarefa){
     my_printf("A procurar a Tarefa a terminar...\n");
     for(iterator = queue_tarefas->inicio; iterator != NULL; iterator = iterator->prox){
       if(iterator->id == tarefa && iterator->pid > 0){
-        kill(iterator->pid, SIGKILL);
-        write_to_historico(tarefa, iterator->comandos, TERMINADA);
-        dequeue(queue_tarefas, tarefa);
-        char *message = "Tarefa terminada.\n";
-        write(fifo_fd[1], message, strlen(message));
-        break;
+        if(iterator->pid > 0){
+          kill(iterator->pid, SIGKILL);
+          write_to_historico(tarefa, iterator->comandos, TERMINADA);
+          dequeue(queue_tarefas, tarefa);
+          char *message = "Tarefa terminada.\n";
+          write(fifo_fd[1], message, strlen(message));
+          break;
+        }else{
+          my_printf2("Terminar: pid inválido %d\n", iterator->pid);
+        }
       }
     }
   }else{
@@ -574,6 +577,7 @@ int ajuda(){
     write(fifo_fd[1], buf, bytes);
   }
 
+  // Fechar o ficheiro de ajuda.
   close(file_help);
   return 0;
 }

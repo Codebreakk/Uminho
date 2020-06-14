@@ -99,6 +99,8 @@ int enqueue(Queue *q, char* comandos, int id, int pid);
 
 int dequeue(Queue *q, int id);
 
+int dequeue_by_pid(Queue *q, int pid, int return_val);
+
 /** Lista de funções para manipulação dos fifos. */
 int open_fifo_server_client();
 

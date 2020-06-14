@@ -83,13 +83,19 @@ int main(int argc, char * argv[]){
         write(fifo_fd[1], tempo_execucao_msg, strlen(tempo_execucao_msg));
         close_fifo_server_client();
       }else if(strncmp(buf, EXECUTAR, strlen(EXECUTAR)) == 0){
+        close_fifo_client_server();
+        // open_fifo_server_client();
         char * comando = malloc(bytes_read);
         strncpy(comando, buf, strlen(buf)-9);
         setup_executar(buf + 9);
+        // close_fifo_server_client();
       }else if(strncmp(buf, LISTAR, strlen(LISTAR)) == 0){
+        // abrir fifo de escrita do servidor para o cliente
         open_fifo_server_client();
+        // executar comando
         listar();
         my_printf("Terminado listar.\n");
+        // fechar fifo de escrita do servidor para o cliente
         close_fifo_server_client();
       }else if(strncmp(buf, TERMINAR, strlen(TERMINAR)) == 0){
         tokenize(args, buf, ARRAY_SIZE);
