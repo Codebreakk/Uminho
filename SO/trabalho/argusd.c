@@ -32,7 +32,7 @@ int main(int argc, char * argv[]){
   }
 
   /** Abrir/criar ficheiro com histórico do servidor */
-  historico_fd = open(HISTORICO, O_CREAT | O_TRUNC | O_WRONLY, 0640);
+  historico_fd = open(HISTORICO, O_CREAT | O_TRUNC | O_RDWR, 0640);
   if(historico_fd < 0){
     perror("Erro ao abrir o historico_fd.");
   }else{
@@ -48,7 +48,6 @@ int main(int argc, char * argv[]){
     while((bytes_read = read(fifo_fd[0], buf, BUF_SIZE)) > 0){
       // usado apenas pela função executar.
       buf[bytes_read] = '\0';
-      // my_printf2("comando (before): %s\n", buf); // DEBUG
 
       // não podemos ler o buf por completo, apenas até à posição "bytes_read"
       if(strncmp(buf, TEMPO_INACTIVIDADE, strlen(TEMPO_INACTIVIDADE)) == 0){
@@ -58,6 +57,14 @@ int main(int argc, char * argv[]){
         open_fifo_server_client();
         tempo_inactividade(segundos);
         my_printf2("Terminado tempo-inactividade (%d segundos).\n", segundos);
+        char *msg = "Tempo máximo de inactividade: ";
+        char *segundos_as_string = integer_to_string(segundos);
+        char *s = " segundos\n";
+        char *tempo_inactividade_msg = malloc(sizeof(msg) + sizeof(s) + sizeof(segundos_as_string));
+        strcpy(tempo_inactividade_msg, msg);
+        strcat(tempo_inactividade_msg, segundos_as_string);
+        strcat(tempo_inactividade_msg, s);
+        write(fifo_fd[1], tempo_inactividade_msg, strlen(tempo_inactividade_msg));
         close_fifo_server_client();
       }else if(strncmp(buf, TEMPO_EXECUCAO, strlen(TEMPO_EXECUCAO)) == 0){
         tokenize(args, buf, ARRAY_SIZE);
@@ -80,7 +87,6 @@ int main(int argc, char * argv[]){
         strncpy(comando, buf, strlen(buf)-9);
         setup_executar(buf + 9);
       }else if(strncmp(buf, LISTAR, strlen(LISTAR)) == 0){
-        // my_printf("LISTAR\n"); // DEBUG
         open_fifo_server_client();
         listar();
         my_printf("Terminado listar.\n");
@@ -88,7 +94,6 @@ int main(int argc, char * argv[]){
       }else if(strncmp(buf, TERMINAR, strlen(TERMINAR)) == 0){
         tokenize(args, buf, ARRAY_SIZE);
         int id_tarefa = atoi(args[1]);
-
         open_fifo_server_client();
         terminar(id_tarefa);
         close_fifo_server_client();

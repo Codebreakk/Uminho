@@ -52,7 +52,6 @@ void replace_flags_with_names(char * argv[]){
 // Recebe os comandos já tratados pela main e, se o comando for válido, envia
 // para o servidor
 int run_argus(int argc, char * argv[]){
-  // my_printf2("%d %s %s\n", argc, argv[0], argv[1]); // DEBUG
   if(strcmp(argv[0], TEMPO_INACTIVIDADE) == 0 && argc == 2){
     // tempo-inactividade: ./argus -i n
     // Pedir ao servidor para executar "tempo_inactividade(n)"
@@ -113,12 +112,9 @@ int run_argus(int argc, char * argv[]){
     // fechar fifo de escrita do cliente para o servidor
     // Concatenação dos argumentos para uma única string.
 
-    // my_printf("we're in.\n"); // DEBUG
     char * comando = malloc(sizeof(argv[0]) + sizeof(argv[1]) + sizeof(WHITESPACE));
     strcpy(comando, argv[0]);
-
     strcat(comando, WHITESPACE);
-
     strcat(comando, argv[1]);
 
     // abrir fifo de escrita do cliente para o servidor
@@ -232,6 +228,8 @@ int run_argus(int argc, char * argv[]){
     }
     // fechar fifo de leitura do servidor para o cliente
     close_fifo_server_client();
+  }else{
+    my_printf("Comando não reconhecido.\n");
   }
 
   return 0;

@@ -63,13 +63,14 @@ int historico_fd;
 #define MSG_MAX_INACTIVIDADE ", max inactividade: "
 #define MSG_MAX_EXECUCAO ", max execução: "
 #define MSG_TERMINADA ", terminada: "
+#define MSG_ERRO ", erro: "
 
 
 /** Definições da Queue que guarda as tarefas que estão a ser executadas. Esta
 * queue foi definida de acordo com os apontamentos da disciplina de Algoritmos
 * e Complexidade relativos a "Estruturas de Dados", como se pode verificar no
 * ponto 3.2.1 ("Queues usando listas ligadas"). Contudo foram feitas alterações
-* mínimas e algumas correcções.
+* para adaptar ao nosso caso.
 */
 
 /** Estrutura que guarda o comando e estado de cada tarefa. */
@@ -117,6 +118,8 @@ int tempo_inactividade(int segundos);
 int tempo_execucao(int segundos);
 
 void execution_handler(int signum);
+
+void sigchild_handler(int signum);
 
 int setup_executar(char* comandos);
 

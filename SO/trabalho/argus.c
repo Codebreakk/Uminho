@@ -9,7 +9,6 @@ int main(int argc, char * argv[]){
     my_printf("\nargus$ ");
     // TODO: criar o nosso read para evitar problemas com o tamanho dos argumentos
     while((total = read(0, buf, BUF_SIZE)) != 0){
-      // my_printf2("buf = %s\n", buf); // DEBUG
       char* args[ARRAY_SIZE];
       if(strlen(buf) > 0){
         int length_args = 0;
@@ -21,7 +20,6 @@ int main(int argc, char * argv[]){
             char* pointer = strchr(executar, '"');
             if(pointer != NULL){ // Se não encontrar as aspas, o comando não é válido.
               *pointer = '\0'; // apaga a partir do char '"' para a frente
-              // my_printf2("%s\n", executar); // DEBUG
               strcpy(args[1], executar);
               length_args = 2;
             }
@@ -32,7 +30,6 @@ int main(int argc, char * argv[]){
         }else{
           // TODO: testar e melhorar esta função (ficheiro mySOlib)
           tokenize(args, buf, ARRAY_SIZE);
-          // my_printf2("args0 = %s\nargs1 = %s\n", args[0], args[1]); // DEBUG
           while(args[length_args] != NULL){
             length_args++;
           }
