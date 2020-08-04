@@ -1,0 +1,24 @@
+
+##### OUTPUT TAREFA 1
+AJUDA - LISTA DE COMANDOS
+
+$ tempo-inactividade n (opção -i n da linha de comando):
+Define o tempo máximo n (em segundos) de inactividade de comunicação num pipe anónimo.
+
+$ tempo-execucao n (opção -m n da linha de comando):
+Define o tempo máximo n (em segundos) de execução de uma tarefa.
+
+$ executar "p1|p2...|pn" (opção -e "p1|p2...|pn" da linha de comando):
+Executar uma tarefa.
+
+$ listar (opção -l da linha de comando):
+Listar tarefas em execução.
+
+$ terminar n (opção -t n da linha de comando):
+Terminar uma tarefa em execução.
+
+$ historico (opção -r da linha de comando):
+Listar histórico de tarefas terminadas.
+
+$ ajuda (opção -h da linha de comando):
+Apresentar ajuda à sua utilização.

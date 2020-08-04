@@ -83,7 +83,6 @@ int main(int argc, char * argv[]){
         write(fifo_fd[1], tempo_execucao_msg, strlen(tempo_execucao_msg));
         close_fifo_server_client();
       }else if(strncmp(buf, EXECUTAR, strlen(EXECUTAR)) == 0){
-        close_fifo_client_server();
         // open_fifo_server_client();
         char * comando = malloc(bytes_read);
         strncpy(comando, buf, strlen(buf)-9);

@@ -296,6 +296,7 @@ int setup_executar(char* comandos){
       my_printf("Tempo de execução foi excedido.\n");
       _exit(EXECUCAO);
     }else{
+      alarm(0);
       _exit(result);
     }
   }else{ // isto não precisa estar num else, visto que o filho faz _exit antes.
@@ -466,7 +467,7 @@ int executar(char* comandos, int id){
         wait(&status);
         if(WIFEXITED(status)){
           my_printf2("O processo %d terminou normalmente.\n", pid);
-        }else{
+        }else{ // O processo foi 
           if(WIFSIGNALED(status)){
             if(WTERMSIG(status) == SIGALRM){
               // O processo filho for morto por SIGALRM.
@@ -481,7 +482,7 @@ int executar(char* comandos, int id){
 
   alarm(0);
   my_printf("Executar terminou com sucesso.\n");
-  write_to_historico(id, coms_string, CONCLUIDA);
+  // write_to_historico(id, coms_string, CONCLUIDA);
   _exit(CONCLUIDA);
 }
 

@@ -65,7 +65,6 @@ int historico_fd;
 #define MSG_TERMINADA ", terminada: "
 #define MSG_ERRO ", erro: "
 
-
 /** Definições da Queue que guarda as tarefas que estão a ser executadas. Esta
 * queue foi definida de acordo com os apontamentos da disciplina de Algoritmos
 * e Complexidade relativos a "Estruturas de Dados", como se pode verificar no

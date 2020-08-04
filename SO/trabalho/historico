@@ -1,0 +1,8 @@
+#1, concluida: ls
+#2, concluida: echo ola
+#3, terminada: sleep 10
+#-�, max execução: echo ola
+#4, max execução: sleep 5
+#5, max execução: sleep 15
+#6, concluida: sleep 20
+#7, concluida: sleep 20
